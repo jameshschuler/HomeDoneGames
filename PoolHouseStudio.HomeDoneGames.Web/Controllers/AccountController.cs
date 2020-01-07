@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using System.Collections.Generic;
 
 namespace PoolHouseStudio.HomeDoneGames.Controllers
 {
@@ -12,6 +13,14 @@ namespace PoolHouseStudio.HomeDoneGames.Controllers
         public AccountController(ILogger<AccountController> logger)
         {
             _logger = logger;
+        }
+
+        [HttpGet]
+        public IActionResult Test()
+        {
+            var data = new List<string> { "test" };
+
+            return Ok(data);
         }
     }
 }
