@@ -15,12 +15,13 @@ namespace PoolHouseStudio.HomeDoneGames.Controllers
             _logger = logger;
         }
 
-        [HttpGet]
-        public IActionResult Test()
+        [HttpPost]
+        public IActionResult CreateAccount()
         {
-            var data = new List<string> { "test" };
-
-            return Ok(data);
+            // TODO: 
+            return Ok();
         }
+
+
     }
 }
