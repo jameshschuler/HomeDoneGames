@@ -55,7 +55,12 @@ const JoinRoom: React.FC = () => {
             onChange={handleChange("playerName")}
             value={values.playerName}
           />
-          <Button variant="contained" color="primary" type="submit">
+          <Button
+            size="medium"
+            variant="contained"
+            color="primary"
+            type="submit"
+          >
             Join!
           </Button>
         </form>

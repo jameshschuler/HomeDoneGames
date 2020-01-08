@@ -8,8 +8,7 @@ const App: React.FC = () => {
     <Router>
       <Switch>
         <Route exact path="/" component={GameManager} />
-        <Route exact path="/play" component={GameClient} />
-        {/* TODO: <Route exact path="/play/lobby" component={GameClient} /> */}
+        <Route path="/play" component={GameClient} />
       </Switch>
     </Router>
   );
