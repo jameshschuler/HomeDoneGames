@@ -3,11 +3,13 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.29613.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoolHouseStudio.HomeDoneGames.Web", "PoolHouseStudio.HomeDoneGames.Web\PoolHouseStudio.HomeDoneGames.Web.csproj", "{14619DE1-031A-466B-91E3-CECE78383533}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoolHouseStudio.HomeDoneGames.Web", "PoolHouseStudio.HomeDoneGames.Web\PoolHouseStudio.HomeDoneGames.Web.csproj", "{14619DE1-031A-466B-91E3-CECE78383533}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoolHouseStudio.HomeDoneGames.DataAccessLayer", "PoolHouseStudio.HomeDoneGames.Service\PoolHouseStudio.HomeDoneGames.DataAccessLayer.csproj", "{5329F8E8-6865-49EF-B917-35D4ECD2A77E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoolHouseStudio.HomeDoneGames.Service", "PoolHouseStudio.HomeDoneGames.Service\PoolHouseStudio.HomeDoneGames.Service.csproj", "{5329F8E8-6865-49EF-B917-35D4ECD2A77E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoolHouseStudio.HomeDoneGames.Common", "PoolHouseStudio.HomeDoneGames.Common\PoolHouseStudio.HomeDoneGames.Common.csproj", "{E3FC9139-2055-4493-887B-B4E958C2085B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PoolHouseStudio.HomeDoneGames.Common", "PoolHouseStudio.HomeDoneGames.Common\PoolHouseStudio.HomeDoneGames.Common.csproj", "{E3FC9139-2055-4493-887B-B4E958C2085B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PoolHouseStudio.HomeDoneGames.DataAccessLayer", "PoolHouseStudio.HomeDoneGames.DataAccessLayer\PoolHouseStudio.HomeDoneGames.DataAccessLayer.csproj", "{1911E582-DB1F-4A08-86CD-A01C50A46468}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{E3FC9139-2055-4493-887B-B4E958C2085B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E3FC9139-2055-4493-887B-B4E958C2085B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E3FC9139-2055-4493-887B-B4E958C2085B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1911E582-DB1F-4A08-86CD-A01C50A46468}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1911E582-DB1F-4A08-86CD-A01C50A46468}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1911E582-DB1F-4A08-86CD-A01C50A46468}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1911E582-DB1F-4A08-86CD-A01C50A46468}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
