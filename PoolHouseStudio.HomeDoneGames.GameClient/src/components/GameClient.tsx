@@ -3,7 +3,6 @@ import { HubConnectionBuilder } from "@microsoft/signalr";
 import React, { useEffect } from "react";
 import { match, Route } from "react-router-dom";
 import JoinRoom from "./JoinRoom";
-import Lobby from "./Lobby";
 import Navbar from "./Navbar";
 
 interface GameClientProps {
@@ -40,8 +39,8 @@ const GameClient: React.FC<GameClientProps> = ({ match }) => {
         direction="row-reverse"
         style={{ minHeight: "100vh" }}
       >
-        <Route exact path="/play" component={JoinRoom} />
-        <Route exact path={`${match.path}/lobby`} component={Lobby} />
+        <Route exact path="/" component={JoinRoom} />
+        {/* <Route exact path={`${match.path}/lobby`} component={Lobby} /> */}
       </Grid>
     </div>
   );

@@ -1,14 +1,12 @@
 import React from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import GameClient from "./components/GameClient/GameClient";
-import GameManager from "./components/GameManager/GameManager";
+import GameClient from "./components/GameClient";
 
 const App: React.FC = () => {
   return (
     <Router>
       <Switch>
-        <Route exact path="/" component={GameManager} />
-        <Route path="/play" component={GameClient} />
+        <Route path="/" component={GameClient} />
       </Switch>
     </Router>
   );
