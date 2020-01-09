@@ -27,7 +27,7 @@ namespace PoolHouseStudio.HomeDoneGames
                 builder =>
                 {
                     builder
-                        .WithOrigins("http://localhost:3000")
+                        .AllowAnyOrigin()
                         .AllowAnyMethod()
                         .AllowAnyHeader();
                 });
@@ -53,16 +53,12 @@ namespace PoolHouseStudio.HomeDoneGames
             }
             
             app.UseHttpsRedirection();
-            app.UseStaticFiles();
-            app.UseSpaStaticFiles();
-
             app.UseRouting();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {
-                endpoints.MapControllerRoute(
-                    name: "default",
-                    pattern: "{controller}/{action=Index}/{id?}");
+                endpoints.MapControllers();
                 endpoints.MapHub<GameHub>("/gamehub");
             });
         }
