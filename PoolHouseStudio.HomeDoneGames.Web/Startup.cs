@@ -2,9 +2,13 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using PoolHouseStudio.HomeDoneGames.DataAccessLayer;
+using PoolHouseStudio.HomeDoneGames.DataAccessLayer.Repositories;
+using PoolHouseStudio.HomeDoneGames.Service.Services;
 using PoolHouseStudio.HomeDoneGames.Web.Hubs;
 
 namespace PoolHouseStudio.HomeDoneGames
@@ -32,6 +36,19 @@ namespace PoolHouseStudio.HomeDoneGames
                         .AllowAnyHeader();
                 });
             });
+
+            // TODO: 
+            services.AddDbContext<DataDbContext>(options => 
+                options.UseSqlServer(Configuration.GetConnectionString("")));
+
+            // Repositories
+
+            services.AddScoped(typeof(IAsyncRepository<>), typeof(Repository<>));
+            services.AddScoped<IGameTypeRepository, GameTypeRepository>();
+
+            // Services
+
+            services.AddTransient<IGameTypeService, GameTypeService>();
 
             services.AddControllers();
             services.AddSignalR();

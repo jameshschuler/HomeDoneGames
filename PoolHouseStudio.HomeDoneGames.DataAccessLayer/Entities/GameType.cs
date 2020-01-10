@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace PoolHouseStudio.HomeDoneGames.DataAccessLayer.Entities
 {
     [Table("GameType")]
-    public class GameType
+    public class GameType : BaseEntity
     {
         [Key]
         public int GameTypeID { get; set; }

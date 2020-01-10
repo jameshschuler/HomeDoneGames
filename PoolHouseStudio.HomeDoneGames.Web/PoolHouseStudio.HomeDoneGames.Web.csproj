@@ -26,6 +26,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\PoolHouseStudio.HomeDoneGames.Common\PoolHouseStudio.HomeDoneGames.Common.csproj" />
+    <ProjectReference Include="..\PoolHouseStudio.HomeDoneGames.DataAccessLayer\PoolHouseStudio.HomeDoneGames.DataAccessLayer.csproj" />
+    <ProjectReference Include="..\PoolHouseStudio.HomeDoneGames.Service\PoolHouseStudio.HomeDoneGames.Service.csproj" />
   </ItemGroup>
 
   <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">

@@ -4,4 +4,8 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\PoolHouseStudio.HomeDoneGames.DataAccessLayer\PoolHouseStudio.HomeDoneGames.DataAccessLayer.csproj" />
+  </ItemGroup>
+
 </Project>
