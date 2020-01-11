@@ -37,9 +37,8 @@ namespace PoolHouseStudio.HomeDoneGames
                 });
             });
 
-            // TODO: 
             services.AddDbContext<DataDbContext>(options => 
-                options.UseSqlServer(Configuration.GetConnectionString("")));
+                options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             // Repositories
 

@@ -17,9 +17,12 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Controllers
 
         [HttpGet]
         [Route("", Name = "GetGameTypes")]
-        public Task GetGameTypes()
+        public async Task<IActionResult> GetGameTypes()
         {
-            return GameTypeService.GetGameTypes();
+            var gameTypes = await GameTypeService.GetGameTypes();
+
+
+            return Ok(gameTypes);
         }
     }
 }
