@@ -9,6 +9,7 @@ namespace PoolHouseStudio.HomeDoneGames.DataAccessLayer
             : base(options)
         { }
 
-        public virtual DbSet<GameType> GameTypes { get; set; }
+        public virtual DbSet<GameType>  GameTypes { get; set; }
+        public virtual DbSet<Room>      Rooms     { get; set; }
     }
 }

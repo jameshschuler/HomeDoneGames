@@ -44,7 +44,8 @@ namespace PoolHouseStudio.HomeDoneGames
 
             services.AddScoped(typeof(IAsyncRepository<>), typeof(Repository<>));
             services.AddScoped<IGameTypeRepository, GameTypeRepository>();
-
+            services.AddScoped<IRoomRepository, RoomRepository>();
+            
             // Services
 
             services.AddTransient<IGameTypeService, GameTypeService>();
