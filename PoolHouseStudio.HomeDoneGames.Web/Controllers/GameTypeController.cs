@@ -21,7 +21,6 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Controllers
         {
             var gameTypes = await GameTypeService.GetGameTypes();
 
-
             return Ok(gameTypes);
         }
     }

@@ -1,4 +1,6 @@
-﻿using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response;
+﻿using PoolHouseStudio.HomeDoneGames.Common;
+using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response;
+using PoolHouseStudio.HomeDoneGames.DataAccessLayer.Entities;
 using PoolHouseStudio.HomeDoneGames.DataAccessLayer.Repositories;
 using System;
 using System.Linq;
@@ -28,19 +30,29 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             var gameType = await _gameTypeRepository.GetById(gameTypeID);
             if (gameType == null)
             {
-                // TODO: throw or return not found error?
+                throw new NotFoundException("Invalid Game Type", $"Game Type ID {gameTypeID} is not valid.");
             }
 
+            // TODO: ensure uniqueness among game type and room code
             var roomCode = GenerateRoomCode();
-            // make sure it's unique among game type and room code
-            // save in table
-            // send back response
 
-            throw new NotImplementedException();
+            var room = new Room
+            {
+                GameType = gameType,
+                RoomCode = roomCode,
+                ExpireDate = DateTime.Now.AddMinutes(30)
+            };
+
+            await _roomRepository.Add(room);
+
+            return new CreateRoomResponse
+            {
+                GameTypeID = room.GameType.GameTypeID,
+                RoomCode = room.RoomCode
+            };
         }
 
-       
-        public string GenerateRoomCode(int length = 4)
+        private string GenerateRoomCode(int length = 4)
         {
             const string chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
             var random = new Random();
