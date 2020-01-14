@@ -8,5 +8,6 @@ namespace PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response
         public string GameName { get; set; }
         public int GameTypeID { get; set; }
         public string RoomCode { get; set; }
+        public int RoomID { get; set; }
     }
 }

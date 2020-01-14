@@ -24,12 +24,31 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Controllers
         {
             if (createRoomRequest == null)
             {
-                return NotFound();
+                return BadRequest();
             }
 
             var response = await _roomService.CreateRoom(createRoomRequest.GameTypeID);
             
             return Ok(response);
+        }
+
+        [HttpGet]
+        [Route("{roomCode}/validate")]
+        public async Task<IActionResult> ValidateRoom(string roomCode)
+        {
+            if (roomCode == null)
+            {
+                return BadRequest();
+            }
+
+            var response = await _roomService.ValidateRoom(roomCode);
+
+            if (response.IsValid && !response.IsExpired)
+            {
+                return Ok(response);
+            }
+
+            return BadRequest(response);
         }
     }
 }

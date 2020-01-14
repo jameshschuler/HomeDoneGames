@@ -1,4 +1,5 @@
 ﻿using PoolHouseStudio.HomeDoneGames.Common;
+using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Request;
 using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response;
 using PoolHouseStudio.HomeDoneGames.DataAccessLayer.Entities;
 using PoolHouseStudio.HomeDoneGames.DataAccessLayer.Repositories;
@@ -11,6 +12,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
     public interface IRoomService
     {
         Task<CreateRoomResponse> CreateRoom(int gameTypeID);
+        Task<ValidateRoomResponse> ValidateRoom(string roomCode);
     }
 
     public class RoomService : IRoomService
@@ -50,9 +52,39 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
                 ExpireDate = room.ExpireDate,
                 GameName = room.GameType.GameName,
                 GameTypeID = room.GameType.GameTypeID,
-                RoomCode = room.RoomCode
+                RoomCode = room.RoomCode,
+                RoomID = room.RoomID
             };
         }
+
+        public async Task<ValidateRoomResponse> ValidateRoom(string roomCode)
+        {
+            var room = await _roomRepository.FirstOrDefault(e => e.RoomCode == roomCode);
+            if (room == null)
+            {
+                return new ValidateRoomResponse
+                {
+                    IsValid = false,
+                    Message = "Room Code is Invalid!"
+                };
+            }
+
+            if (DateTime.Now > room.ExpireDate)
+            {
+                return new ValidateRoomResponse
+                {
+                    IsExpired = true,
+                    IsValid = true,
+                    Message = "Room Code has expired!"
+                };
+            }
+
+            return new ValidateRoomResponse
+            {
+                IsValid = true
+            };
+        }
+
 
         private string GenerateRoomCode(int length = 4)
         {
