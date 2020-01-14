@@ -1,8 +1,10 @@
 ﻿using System;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PoolHouseStudio.HomeDoneGames.DataAccessLayer.Entities
 {
+    [Table("Room")]
     public class Room : BaseEntity
     {
         public DateTime ExpireDate  { get; set; }

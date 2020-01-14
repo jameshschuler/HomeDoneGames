@@ -26,6 +26,9 @@ namespace PoolHouseStudio.HomeDoneGames.DataAccessLayer.Repositories
 
         public async Task Add(T entity)
         {
+            entity.CreatedDate = DateTime.Now;
+            entity.ModifiedDate = DateTime.Now;
+
             // await Context.AddAsync(entity);
             await Context.Set<T>().AddAsync(entity);
             await Context.SaveChangesAsync();
@@ -33,6 +36,8 @@ namespace PoolHouseStudio.HomeDoneGames.DataAccessLayer.Repositories
 
         public Task Update(T entity)
         {
+            entity.ModifiedDate = DateTime.Now;
+
             // In case AsNoTracking is used
             Context.Entry(entity).State = EntityState.Modified;
             return Context.SaveChangesAsync();

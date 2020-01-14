@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Request;
+using PoolHouseStudio.HomeDoneGames.Service.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,21 +12,24 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Controllers
     [Route("api/room")]
     public class RoomController : ControllerBase
     {
-        public RoomController()
-        {
+        private readonly IRoomService _roomService;
 
+        public RoomController(IRoomService roomService)
+        {
+            _roomService = roomService;
         }
 
         [HttpPost]
-        public IActionResult CreateRoom([FromBody]CreateRoomRequest createRoomRequest)
+        public async Task<IActionResult> CreateRoom([FromBody]CreateRoomRequest createRoomRequest)
         {
             if (createRoomRequest == null)
             {
                 return NotFound();
             }
 
+            var response = await _roomService.CreateRoom(createRoomRequest.GameTypeID);
             
-            return Ok();
+            return Ok(response);
         }
     }
 }

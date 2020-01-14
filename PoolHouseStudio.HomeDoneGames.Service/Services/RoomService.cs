@@ -47,6 +47,8 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
 
             return new CreateRoomResponse
             {
+                ExpireDate = room.ExpireDate,
+                GameName = room.GameType.GameName,
                 GameTypeID = room.GameType.GameTypeID,
                 RoomCode = room.RoomCode
             };

@@ -48,6 +48,7 @@ namespace PoolHouseStudio.HomeDoneGames
             // Services
 
             services.AddTransient<IGameTypeService, GameTypeService>();
+            services.AddTransient<IRoomService, RoomService>();
 
             services.AddControllers();
             services.AddSignalR();
