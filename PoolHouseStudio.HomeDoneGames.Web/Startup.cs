@@ -26,13 +26,14 @@ namespace PoolHouseStudio.HomeDoneGames
         {
             services.AddCors(options =>
             {
-                options.AddPolicy("AllowOrigin",
+                options.AddPolicy("Default",
                 builder =>
                 {
                     builder
-                        .AllowAnyOrigin()
+                    .WithOrigins("http://localhost:3000")
+                        .AllowAnyHeader()
                         .AllowAnyMethod()
-                        .AllowAnyHeader();
+                        .AllowCredentials();
                 });
             });
 
@@ -57,7 +58,9 @@ namespace PoolHouseStudio.HomeDoneGames
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            app.UseCors("AllowOrigin");
+            app.UseRouting();
+            app.UseCors("Default");
+            
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
@@ -65,7 +68,6 @@ namespace PoolHouseStudio.HomeDoneGames
 
             app.ConfigureCustomExceptionMiddleware();
             app.UseHttpsRedirection();
-            app.UseRouting();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

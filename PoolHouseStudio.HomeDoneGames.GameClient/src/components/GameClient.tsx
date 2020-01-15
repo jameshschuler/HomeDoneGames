@@ -1,5 +1,4 @@
 import { Grid } from "@material-ui/core";
-import { HubConnectionBuilder } from "@microsoft/signalr";
 import React, { useEffect } from "react";
 import { match, Route } from "react-router-dom";
 import JoinRoom from "./JoinRoom";
@@ -11,22 +10,23 @@ interface GameClientProps {
 
 const GameClient: React.FC<GameClientProps> = ({ match }) => {
   useEffect(() => {
-    test();
+    // test();
   }, []);
 
-  const test = async () => {
-    let connection = new HubConnectionBuilder()
-      .withUrl("http://localhost:60284/gamehub")
-      .build();
+  // TODO: still having cors issues
+  // const test = async () => {
+  //   let connection = new HubConnectionBuilder()
+  //     .withUrl("http://localhost:60300/gamehub")
+  //     .build();
 
-    console.log(connection);
-    try {
-      const response = await connection.start();
-      console.log(response);
-    } catch (err) {
-      console.log(err);
-    }
-  };
+  //   console.log(connection);
+  //   try {
+  //     const response = await connection.start();
+  //     console.log(response);
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // };
 
   return (
     <div className="game-client">
