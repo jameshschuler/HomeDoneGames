@@ -1,13 +1,15 @@
+$backgroundColor: #f9f7f1;
+
 * {
   margin: 0;
 }
 
 body {
-  font-family: "Gloria Hallelujah", cursive;
+  font-family: "Gloria Hallelujah", cursive !important;
 }
 
 #container {
-  background-color: lightgrey;
+  background-color: $backgroundColor;
   min-height: 100vh;
 }
 
@@ -38,9 +40,35 @@ body {
   #nav-right {
     display: flex;
     flex-direction: row;
+    justify-content: space-around;
+    width: 200px;
+  }
+}
 
-    li {
-      margin-right: 1rem;
+.paper {
+  background-color: $backgroundColor !important;
+  margin-top: 40%;
+
+  .title {
+    font-size: 4rem;
+    text-align: center;
+  }
+
+  #game-types {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+
+    button {
+      background-color: #fff;
+      border-width: 3px;
+      font-size: 1.25rem;
+      height: 75px;
+      margin: 1rem;
+
+      &:hover {
+        background-color: lightgrey;
+      }
     }
   }
 }

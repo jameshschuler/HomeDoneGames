@@ -4,7 +4,7 @@ export interface GameTypeService {
   getGameTypes: () => any;
 }
 
-export interface GameType {
+interface GameType {
   gameTypeID: number;
   gameName: string;
 }
@@ -19,6 +19,10 @@ const getGameTypes = async () => {
     // TODO: handle errors
     console.log(err);
   }
+};
+
+const formatGameNameUrl = (gameName: string) => {
+  return gameName.replace(/\s+/g, "").toLowerCase();
 };
 
 export default {
