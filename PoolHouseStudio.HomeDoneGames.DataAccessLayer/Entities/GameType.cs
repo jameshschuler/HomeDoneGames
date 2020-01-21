@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -13,6 +12,7 @@ namespace PoolHouseStudio.HomeDoneGames.DataAccessLayer.Entities
             Rooms = new List<Room>();
         }
 
+        public string Description { get; set; }
         [Key]
         public int GameTypeID { get; set; }
         public string GameName { get; set; }
