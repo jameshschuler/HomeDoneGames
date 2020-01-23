@@ -2,7 +2,7 @@ import { Button, Paper } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import React from "react";
 import GameType from "../../models/GameType";
-import Loader from "../Loader";
+import SimpleLoader from "../SimpleLoader";
 
 interface GameTypeSelectProps {
   gameTypes: GameType[];
@@ -16,34 +16,37 @@ const GameTypeSelect: React.FC<GameTypeSelectProps> = ({
   selectGameType
 }) => {
   return (
-    <Grid container alignItems="center" justify="center" spacing={0}>
-      <Grid item xs={12} sm={6}>
-        <Paper elevation={0} className="paper">
-          {loading ? (
-            <Loader />
-          ) : (
-            <>
-              <h1 className="title">Select a Game</h1>
-              <div id="game-types">
-                {gameTypes &&
-                  gameTypes.map((gameType: GameType, index: number) => {
-                    return (
-                      <Button
-                        key={index}
-                        size="large"
-                        variant="outlined"
-                        onClick={() => selectGameType(gameType)}
-                      >
-                        {gameType.gameName}
-                      </Button>
-                    );
-                  })}
-              </div>
-            </>
-          )}
-        </Paper>
+    <>
+      <Grid container alignItems="center" justify="center" spacing={0}>
+        <Grid item xs={12} sm={6}>
+          <Paper elevation={0} className="paper">
+            {loading ? (
+              <SimpleLoader />
+            ) : (
+              <>
+                <h1 className="title">Select a Game</h1>
+                <div className="menu">
+                  {gameTypes &&
+                    gameTypes.length > 0 &&
+                    gameTypes.map((gameType: GameType, index: number) => {
+                      return (
+                        <Button
+                          key={index}
+                          size="large"
+                          variant="outlined"
+                          onClick={() => selectGameType(gameType)}
+                        >
+                          {gameType.gameName}
+                        </Button>
+                      );
+                    })}
+                </div>
+              </>
+            )}
+          </Paper>
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   );
 };
 

@@ -23,8 +23,8 @@ const gameStateReducer = (state: GameState = initialState, action: Action) => {
       };
     case ActionType.UpdateState:
       return {
-        gameStateValue: action.payload,
-        ...state
+        ...state,
+        gameStateValue: action.payload.gameState
       };
     default:
       return state;

@@ -11,3 +11,12 @@ export const setGameType = (gameType: GameType) => {
     }
   };
 };
+
+export const setGameState = (gameState: GameStateEnum) => {
+  return {
+    type: ActionType.UpdateState,
+    payload: {
+      gameState: gameState
+    }
+  };
+};

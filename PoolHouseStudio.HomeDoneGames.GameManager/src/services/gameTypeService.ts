@@ -1,16 +1,14 @@
-import axios from "axios";
 import APIResponse from "../models/APIResponse";
 import GameType from "../models/GameType";
+import instance from "./AxiosConfig";
 
 export interface GameTypeService {
   getGameTypes: () => any;
 }
 
-const baseUrl = "https://localhost:44320/"; // TODO: move to react environment variable
-
 const getGameTypes = async (): Promise<GameType[] | APIResponse> => {
   try {
-    const response = await axios.get(`${baseUrl}api/gameType`);
+    const response = await instance.get(`/gameType`);
     return response.data as GameType[];
   } catch (err) {
     const response: APIResponse = {

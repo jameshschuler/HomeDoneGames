@@ -47,14 +47,14 @@ body {
 
 .paper {
   background-color: $backgroundColor !important;
-  margin-top: 40%;
+  margin-top: 30%;
 
   .title {
     font-size: 4rem;
     text-align: center;
   }
 
-  #game-types {
+  .menu {
     display: flex;
     flex-direction: column;
     padding: 1rem;
@@ -70,5 +70,20 @@ body {
         background-color: lightgrey;
       }
     }
+  }
+}
+
+.simple-loader {
+  font-size: 3rem;
+  text-align: center;
+}
+
+.go-back-link {
+  margin-bottom: 0.25rem;
+  padding: 0.75rem 0 0 1rem;
+
+  &:hover {
+    cursor: pointer;
+    font-weight: 600;
   }
 }
