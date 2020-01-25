@@ -1,4 +1,5 @@
 interface APIResponse {
+  data?: any;
   message: string;
   statusCode: number;
 }

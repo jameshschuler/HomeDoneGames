@@ -8,7 +8,7 @@ import {
   setGameState,
   setGameType
 } from "../../store/actions/GameStateActions";
-import { getRoomCode } from "../../store/actions/ManageActions";
+import { connectToHub } from "../../store/actions/ManageActions";
 import { GameState } from "../../store/reducers/GameStateReducer";
 import { RootState } from "../../store/reducers/RootReducer";
 import GameMenu from "./GameMenu";
@@ -18,7 +18,7 @@ interface ContainerProps {
   gameState: GameState;
   gameTypes: GameType[];
   getGameTypes: () => any;
-  getRoomCode: () => any;
+  connectToHub: () => any;
   loading: boolean;
   setGameState: (gameState: GameStateEnum) => any;
   setGameType: (gameType: GameType) => any;
@@ -28,7 +28,7 @@ const Container: React.FC<ContainerProps> = ({
   gameState,
   gameTypes,
   getGameTypes,
-  getRoomCode,
+  connectToHub,
   loading,
   setGameState,
   setGameType
@@ -46,8 +46,7 @@ const Container: React.FC<ContainerProps> = ({
   };
 
   const selectGameMenuOption = (gameMenuOption: GameMenuOption) => {
-    console.log(gameMenuOption);
-    getRoomCode();
+    connectToHub();
   };
 
   const goToScreen = (gameState: GameStateEnum) => {
@@ -96,7 +95,7 @@ const mapStateToProps = (state: RootState) => {
 
 export default connect(mapStateToProps, {
   getGameTypes,
-  getRoomCode,
+  connectToHub,
   setGameState,
   setGameType
 })(Container);

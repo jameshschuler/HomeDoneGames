@@ -3,10 +3,12 @@ import ActionType from "../../models/enums/ActionType";
 
 export interface GlobalState {
   loading: boolean;
+  error: any;
 }
 
 const initialState: GlobalState = {
-  loading: false
+  loading: false,
+  error: undefined
 };
 
 const globalReducer = (state: GlobalState = initialState, action: Action) => {
@@ -19,7 +21,14 @@ const globalReducer = (state: GlobalState = initialState, action: Action) => {
     case ActionType.Success:
       return {
         ...state,
-        loading: false
+        loading: false,
+        error: undefined
+      };
+    case ActionType.Error:
+      return {
+        ...state,
+        loading: false,
+        error: action.payload.error
       };
     default:
       return state;
