@@ -31,14 +31,18 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
                 var hubSuccessResponse = new HubSuccessResponse
                 {
                     Data = response,
-                    Message = "Room was created."
+                    Message = "Room was created.",
+                    Method = "GenerateRoomCode"
                 };
 
                 await SendSuccessResponse(hubSuccessResponse);
             } 
             catch (Exception ex)
             {
-                await SendErrorResponse(new HubErrorResponse { });
+                await SendErrorResponse(new HubErrorResponse {
+                    Message = ex.Message,
+                    Method = "GenerateRoomCode"
+                });
             }
         }
 

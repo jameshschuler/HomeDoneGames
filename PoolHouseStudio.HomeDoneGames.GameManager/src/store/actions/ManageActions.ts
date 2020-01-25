@@ -3,10 +3,9 @@ import HubService from "../../services/HubService";
 
 export const connectToHub = () => async (dispatch: any, getState: any) => {
   const isConnected = await HubService.connectToHub();
-  if (isConnected) {
-    await HubService.addToGroup();
 
-    dispatch({ type: ActionType.Success });
+  if (isConnected) {
+    dispatch({ type: ActionType.Connected });
   } else {
     dispatch({
       type: ActionType.Error,
@@ -20,4 +19,15 @@ export const connectToHub = () => async (dispatch: any, getState: any) => {
   }
 };
 
-export const getRoomCode = () => async (dispatch: any, getState: any) => {};
+export const joinGroup = () => async (dispatch: any, getState: any) => {
+  await HubService.joinGroup();
+  dispatch({ type: ActionType.JoinGroup });
+};
+
+export const generateRoomCode = (gameTypeID: number) => async (
+  dispatch: any,
+  getState: any
+) => {
+  await HubService.generateRoomCode(gameTypeID);
+  dispatch({ type: ActionType.GenerateRoomCode });
+};

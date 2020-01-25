@@ -8,7 +8,11 @@ import {
   setGameState,
   setGameType
 } from "../../store/actions/GameStateActions";
-import { connectToHub } from "../../store/actions/ManageActions";
+import {
+  connectToHub,
+  generateRoomCode,
+  joinGroup
+} from "../../store/actions/ManageActions";
 import { GameState } from "../../store/reducers/GameStateReducer";
 import { RootState } from "../../store/reducers/RootReducer";
 import GameMenu from "./GameMenu";
@@ -17,9 +21,11 @@ import GameTypeSelect from "./GameTypeSelect";
 interface ContainerProps {
   gameState: GameState;
   gameTypes: GameType[];
-  getGameTypes: () => any;
-  connectToHub: () => any;
   loading: boolean;
+  connectToHub: Function;
+  generateRoomCode: (gameTypeID: number) => any;
+  getGameTypes: Function;
+  joinGroup: Function;
   setGameState: (gameState: GameStateEnum) => any;
   setGameType: (gameType: GameType) => any;
 }
@@ -27,9 +33,11 @@ interface ContainerProps {
 const Container: React.FC<ContainerProps> = ({
   gameState,
   gameTypes,
-  getGameTypes,
-  connectToHub,
   loading,
+  connectToHub,
+  generateRoomCode,
+  getGameTypes,
+  joinGroup,
   setGameState,
   setGameType
 }) => {
@@ -45,8 +53,12 @@ const Container: React.FC<ContainerProps> = ({
     setGameType(gameType);
   };
 
-  const selectGameMenuOption = (gameMenuOption: GameMenuOption) => {
-    connectToHub();
+  const selectGameMenuOption = async (gameMenuOption: GameMenuOption) => {
+    if (gameMenuOption === GameMenuOption.Play) {
+      await connectToHub();
+      await joinGroup();
+      await generateRoomCode(gameState.selectedGameType?.gameTypeID!);
+    }
   };
 
   const goToScreen = (gameState: GameStateEnum) => {
@@ -94,8 +106,10 @@ const mapStateToProps = (state: RootState) => {
 };
 
 export default connect(mapStateToProps, {
-  getGameTypes,
   connectToHub,
+  generateRoomCode,
+  getGameTypes,
+  joinGroup,
   setGameState,
   setGameType
 })(Container);

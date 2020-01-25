@@ -9,7 +9,12 @@ enum ActionType {
 
   FetchGameTypes = "FETCH_GAME_TYPES",
 
-  FetchRoomCode = "FETCH_ROOM_CODE"
+  FetchRoomCode = "FETCH_ROOM_CODE",
+
+  // Hub
+  Connected = "CONNECTED",
+  JoinGroup = "JOIN_GROUP",
+  GenerateRoomCode = "GENERATE_ROOM_CODE"
 }
 
 export default ActionType;

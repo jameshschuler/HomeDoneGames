@@ -4,5 +4,6 @@
     {
         public string Title { get; set; } = "Error!";
         public string Message { get; set; }
+        public string Method { get; set; }
     }
 }
