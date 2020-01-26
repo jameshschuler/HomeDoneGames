@@ -9,7 +9,7 @@ enum ActionType {
 
   FetchGameTypes = "FETCH_GAME_TYPES",
 
-  FetchRoomCode = "FETCH_ROOM_CODE",
+  GeneratedRoomCode = "GENERATED_ROOM_CODE",
 
   // Hub
   Connected = "CONNECTED",

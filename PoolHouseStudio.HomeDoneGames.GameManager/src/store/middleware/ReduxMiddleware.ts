@@ -1,5 +1,7 @@
 import ActionType from "../../models/enums/ActionType";
+import GameStateEnum from "../../models/enums/GameState";
 import HubMethod from "../../models/enums/HubMethod";
+import { HubResponse } from "../../models/HubResponse";
 import { getConnection } from "../../services/HubService";
 
 export const signalRMiddleware = (store: any) => (next: any) => async (
@@ -7,16 +9,32 @@ export const signalRMiddleware = (store: any) => (next: any) => async (
 ) => {
   const { getState, dispatch } = store;
 
-  const handleSuccessResponse = (response: any) => {
-    console.log("response", response);
+  const handleSuccessResponse = (response: HubResponse) => {
+    dispatch({ type: ActionType.Success });
+
     switch (response.method) {
       case HubMethod.GenerateRoomCode:
-        console.log(response.data);
+        dispatch({
+          type: ActionType.GeneratedRoomCode,
+          payload: {
+            room: response.data
+          }
+        });
+        dispatch({
+          type: ActionType.UpdateState,
+          payload: { gameState: GameStateEnum.Lobby }
+        });
+        break;
     }
   };
 
-  const handleErrorResponse = (response: any) => {
-    console.log("response", response);
+  const handleErrorResponse = (response: HubResponse) => {
+    dispatch({
+      type: ActionType.Error,
+      payload: {
+        error: response
+      }
+    });
   };
 
   switch (action.type) {

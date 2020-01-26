@@ -3,29 +3,26 @@ import { connect } from "react-redux";
 import GameMenuOption from "../../models/enums/GameMenuOption";
 import GameStateEnum from "../../models/enums/GameState";
 import GameType from "../../models/GameType";
+import { Room } from "../../models/Room";
 import { getGameTypes } from "../../store/actions/DataStoreActions";
 import {
   setGameState,
   setGameType
 } from "../../store/actions/GameStateActions";
-import {
-  connectToHub,
-  generateRoomCode,
-  joinGroup
-} from "../../store/actions/ManageActions";
+import { play } from "../../store/actions/ManageActions";
 import { GameState } from "../../store/reducers/GameStateReducer";
 import { RootState } from "../../store/reducers/RootReducer";
 import GameMenu from "./GameMenu";
 import GameTypeSelect from "./GameTypeSelect";
+import Lobby from "./Lobby";
 
 interface ContainerProps {
   gameState: GameState;
   gameTypes: GameType[];
   loading: boolean;
-  connectToHub: Function;
-  generateRoomCode: (gameTypeID: number) => any;
-  getGameTypes: Function;
-  joinGroup: Function;
+  room: Room;
+  getGameTypes: () => any;
+  play: (gameTypeID: number) => any;
   setGameState: (gameState: GameStateEnum) => any;
   setGameType: (gameType: GameType) => any;
 }
@@ -34,10 +31,9 @@ const Container: React.FC<ContainerProps> = ({
   gameState,
   gameTypes,
   loading,
-  connectToHub,
-  generateRoomCode,
+  room,
   getGameTypes,
-  joinGroup,
+  play,
   setGameState,
   setGameType
 }) => {
@@ -55,19 +51,18 @@ const Container: React.FC<ContainerProps> = ({
 
   const selectGameMenuOption = async (gameMenuOption: GameMenuOption) => {
     if (gameMenuOption === GameMenuOption.Play) {
-      await connectToHub();
-      await joinGroup();
-      await generateRoomCode(gameState.selectedGameType?.gameTypeID!);
+      await play(gameState.selectedGameType?.gameTypeID!);
     }
   };
 
-  const goToScreen = (gameState: GameStateEnum) => {
-    setGameState(gameState);
+  const goToScreen = (from: GameStateEnum, to: GameStateEnum) => {
+    // TODO: show warning when trying to leave a lobby
+    setGameState(to);
   };
 
   const renderSwitch = (gameStateValue: GameStateEnum) => {
     switch (gameStateValue) {
-      case GameStateEnum.GameTypeMenu:
+      case GameStateEnum.GameOptionsMenu:
         return (
           <GameMenu
             goToScreen={goToScreen}
@@ -75,7 +70,7 @@ const Container: React.FC<ContainerProps> = ({
             gameType={gameState.selectedGameType}
           />
         );
-      case GameStateEnum.GameTypeSelect:
+      case GameStateEnum.GameSelect:
         return (
           <GameTypeSelect
             gameTypes={gameTypes}
@@ -83,6 +78,8 @@ const Container: React.FC<ContainerProps> = ({
             selectGameType={selectGameType}
           />
         );
+      case GameStateEnum.Lobby:
+        return <Lobby goToScreen={goToScreen} room={room} />;
       default:
         return (
           <GameTypeSelect
@@ -101,15 +98,14 @@ const mapStateToProps = (state: RootState) => {
   return {
     gameState: state.gameState,
     gameTypes: state.dataStore.gameTypes,
-    loading: state.global.loading
+    loading: state.global.loading,
+    room: state.manage.room
   };
 };
 
 export default connect(mapStateToProps, {
-  connectToHub,
-  generateRoomCode,
   getGameTypes,
-  joinGroup,
+  play,
   setGameState,
   setGameType
 })(Container);

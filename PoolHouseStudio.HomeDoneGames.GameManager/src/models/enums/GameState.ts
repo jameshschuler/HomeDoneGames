@@ -1,6 +1,7 @@
 enum GameStateEnum {
-  GameTypeSelect = "GameTypeSelect",
-  GameTypeMenu = "GameTypeMenu"
+  GameSelect = "GameSelect",
+  GameOptionsMenu = "GameOptionsMenu",
+  Lobby = "Lobby"
 }
-
+// TODO:
 export default GameStateEnum;

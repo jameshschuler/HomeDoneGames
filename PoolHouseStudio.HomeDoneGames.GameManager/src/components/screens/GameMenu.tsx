@@ -5,7 +5,7 @@ import GameStateEnum from "../../models/enums/GameState";
 import GameType from "../../models/GameType";
 
 interface GameMenuProps {
-  goToScreen: (gameState: GameStateEnum) => any;
+  goToScreen: (from: GameStateEnum, to: GameStateEnum) => any;
   selectGameMenuOption: (gameMenuOption: GameMenuOption) => any;
   gameType?: GameType;
 }
@@ -19,7 +19,9 @@ const GameMenu: React.FC<GameMenuProps> = ({
     <>
       <div
         className="go-back-link"
-        onClick={() => goToScreen(GameStateEnum.GameTypeSelect)}
+        onClick={() =>
+          goToScreen(GameStateEnum.GameOptionsMenu, GameStateEnum.GameSelect)
+        }
       >
         <span>
           <i className="fas fa-arrow-left"></i> Back
@@ -36,9 +38,6 @@ const GameMenu: React.FC<GameMenuProps> = ({
                 onClick={() => selectGameMenuOption(GameMenuOption.Play)}
               >
                 Play
-              </Button>
-              <Button size="large" variant="outlined">
-                Settings
               </Button>
               <Button size="large" variant="outlined">
                 About

@@ -7,7 +7,7 @@ export const setGameType = (gameType: GameType) => {
     type: ActionType.SetGameType,
     payload: {
       gameType,
-      gameState: GameStateEnum.GameTypeMenu
+      gameState: GameStateEnum.GameOptionsMenu
     }
   };
 };

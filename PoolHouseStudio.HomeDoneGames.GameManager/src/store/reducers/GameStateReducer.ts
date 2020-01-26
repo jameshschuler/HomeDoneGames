@@ -9,7 +9,7 @@ export interface GameState {
 }
 
 const initialState: GameState = {
-  gameStateValue: GameStateEnum.GameTypeSelect,
+  gameStateValue: GameStateEnum.GameSelect,
   selectedGameType: undefined
 };
 
