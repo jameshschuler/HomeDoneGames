@@ -1,6 +1,6 @@
 import ActionType from "./enums/ActionType";
 
-export default interface Action {
+export interface IAction {
   type: ActionType;
   payload: any;
 }

@@ -1,4 +1,4 @@
-import Action from "../../models/Action";
+import { IAction } from "../../models/Action";
 import ActionType from "../../models/enums/ActionType";
 
 export interface ManageState {
@@ -9,7 +9,7 @@ const initialState: ManageState = {
   room: undefined
 };
 
-const managerReducer = (state: ManageState = initialState, action: Action) => {
+const managerReducer = (state: ManageState = initialState, action: IAction) => {
   switch (action.type) {
     case ActionType.GeneratedRoomCode:
       return {

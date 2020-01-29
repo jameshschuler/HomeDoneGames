@@ -1,4 +1,5 @@
 import { Grid, Paper } from "@material-ui/core";
+import Typography from "@material-ui/core/Typography";
 import React from "react";
 import GameStateEnum from "../../models/enums/GameState";
 import { Room } from "../../models/Room";
@@ -25,6 +26,9 @@ const Lobby: React.FC<LobbyProps> = ({ goToScreen, room }) => {
         <Grid item xs={12} sm={6}>
           <Paper elevation={0} className="paper">
             <h1 className="title">{room.roomCode}</h1>
+            <Typography variant="h2" align="center">
+              Waiting for Players...
+            </Typography>
           </Paper>
         </Grid>
       </Grid>

@@ -1,4 +1,4 @@
-import Action from "../../models/Action";
+import { IAction } from "../../models/Action";
 import ActionType from "../../models/enums/ActionType";
 import GameStateEnum from "../../models/enums/GameState";
 import GameType from "../../models/GameType";
@@ -13,7 +13,7 @@ const initialState: GameState = {
   selectedGameType: undefined
 };
 
-const gameStateReducer = (state: GameState = initialState, action: Action) => {
+const gameStateReducer = (state: GameState = initialState, action: IAction) => {
   switch (action.type) {
     case ActionType.SetGameType:
       return {

@@ -37,6 +37,7 @@ namespace PoolHouseStudio.HomeDoneGames
                 });
             });
 
+            services.AddHealthChecks();
             services.AddDbContext<DataDbContext>(options => 
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
@@ -72,6 +73,7 @@ namespace PoolHouseStudio.HomeDoneGames
 
             app.UseEndpoints(endpoints =>
             {
+                endpoints.MapHealthChecks("/api/healthcheck");
                 endpoints.MapControllers();
                 endpoints.MapHub<GameHub>("/gamehub");
             });

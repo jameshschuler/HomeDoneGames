@@ -12,9 +12,6 @@ import {
 import { play } from "../../store/actions/ManageActions";
 import { GameState } from "../../store/reducers/GameStateReducer";
 import { RootState } from "../../store/reducers/RootReducer";
-import GameMenu from "./GameMenu";
-import GameTypeSelect from "./GameTypeSelect";
-import Lobby from "./Lobby";
 
 interface ContainerProps {
   gameState: GameState;
@@ -41,9 +38,7 @@ const Container: React.FC<ContainerProps> = ({
     getGameTypes();
   }, []);
 
-  useEffect(() => {
-    renderSwitch(gameState.gameStateValue);
-  }, [gameState.gameStateValue, gameTypes]);
+  useEffect(() => {}, [gameState.gameStateValue, gameTypes]);
 
   const selectGameType = (gameType: GameType) => {
     setGameType(gameType);
@@ -55,43 +50,7 @@ const Container: React.FC<ContainerProps> = ({
     }
   };
 
-  const goToScreen = (from: GameStateEnum, to: GameStateEnum) => {
-    // TODO: show warning when trying to leave a lobby
-    setGameState(to);
-  };
-
-  const renderSwitch = (gameStateValue: GameStateEnum) => {
-    switch (gameStateValue) {
-      case GameStateEnum.GameOptionsMenu:
-        return (
-          <GameMenu
-            goToScreen={goToScreen}
-            selectGameMenuOption={selectGameMenuOption}
-            gameType={gameState.selectedGameType}
-          />
-        );
-      case GameStateEnum.GameSelect:
-        return (
-          <GameTypeSelect
-            gameTypes={gameTypes}
-            loading={loading}
-            selectGameType={selectGameType}
-          />
-        );
-      case GameStateEnum.Lobby:
-        return <Lobby goToScreen={goToScreen} room={room} />;
-      default:
-        return (
-          <GameTypeSelect
-            gameTypes={gameTypes}
-            loading={loading}
-            selectGameType={selectGameType}
-          />
-        );
-    }
-  };
-
-  return <>{renderSwitch(gameState.gameStateValue)}</>;
+  return <div>T</div>;
 };
 
 const mapStateToProps = (state: RootState) => {

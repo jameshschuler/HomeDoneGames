@@ -1,4 +1,4 @@
-import Action from "../../models/Action";
+import { IAction } from "../../models/Action";
 import ActionType from "../../models/enums/ActionType";
 import GameType from "../../models/GameType";
 
@@ -12,7 +12,7 @@ const initialState: DataStoreState = {
 
 const dataStoreReducer = (
   state: DataStoreState = initialState,
-  action: Action
+  action: IAction
 ) => {
   switch (action.type) {
     case ActionType.FetchGameTypes:

@@ -1,6 +1,6 @@
 import APIResponse from "../models/APIResponse";
 import GameType from "../models/GameType";
-import instance from "./AxiosConfig";
+import { instance } from "./AxiosConfig";
 
 export interface GameTypeService {
   getGameTypes: () => any;
@@ -20,7 +20,8 @@ const getGameTypes = async (): Promise<GameType[] | APIResponse> => {
   }
 };
 
-const formatGameNameUrl = (gameName: string) => {
+// TODO: move to utilities
+export const formatGameNameUrl = (gameName: string) => {
   return gameName.replace(/\s+/g, "").toLowerCase();
 };
 
