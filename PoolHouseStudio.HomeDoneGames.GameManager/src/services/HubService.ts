@@ -30,20 +30,11 @@ const generateRoomCode = async (gameTypeID: number) => {
   }
 };
 
-const joinGroup = async () => {
-  try {
-    await connection.invoke("AddToManagerGroup");
-  } catch (err) {
-    console.log(err);
-  }
-};
-
 export const getConnection = () => {
   return connection;
 };
 
 export default {
   connectToHub,
-  joinGroup,
   generateRoomCode
 };

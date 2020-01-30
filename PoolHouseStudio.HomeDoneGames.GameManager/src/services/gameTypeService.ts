@@ -2,6 +2,7 @@ import APIResponse from "../models/APIResponse";
 import GameType from "../models/GameType";
 import { instance } from "./AxiosConfig";
 
+// FIXME: Refactor
 export interface GameTypeService {
   getGameTypes: () => any;
 }

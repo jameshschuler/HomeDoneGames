@@ -5,10 +5,8 @@ enum ActionType {
   Error = "ERROR",
   Healthcheck = "HEALTHCHECK",
 
-  UpdateState = "UPDATE_STATE",
-
   // Game Type
-  SetGameType = "SET_GAME_TYPE",
+  SetSelectedGameType = "SET_SELECTED_GAME_TYPE",
   FetchGameTypes = "FETCH_GAME_TYPES",
 
   // Hub

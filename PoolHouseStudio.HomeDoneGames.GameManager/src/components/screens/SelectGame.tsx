@@ -5,6 +5,7 @@ import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 import GameType from "../../models/GameType";
 import { getGameTypes } from "../../store/actions/DataStoreActions";
+import { setSelectedGame } from "../../store/actions/GameStateActions";
 import { RootState } from "../../store/reducers/RootReducer";
 import SimpleLoader from "../SimpleLoader";
 
@@ -12,14 +13,14 @@ interface ISelectGameProps {
   gameTypes: GameType[];
   getGameTypes: () => any;
   loading: boolean;
-  selectGameType: (gameType: GameType) => any;
+  setSelectedGame: (gameType: GameType) => any;
 }
 
 const SelectGame: React.FC<ISelectGameProps> = ({
   gameTypes,
   getGameTypes,
   loading,
-  selectGameType
+  setSelectedGame
 }) => {
   useEffect(() => {
     getGameTypes();
@@ -44,7 +45,7 @@ const SelectGame: React.FC<ISelectGameProps> = ({
                           key={index}
                           size="large"
                           variant="outlined"
-                          //onClick={() => selectGameType(gameType)}
+                          onClick={() => setSelectedGame(gameType)}
                         >
                           <Link to={`/play/${gameType.gameTypeID}/menu`}>
                             {gameType.gameName}
@@ -69,4 +70,6 @@ const mapStateToProps = (state: RootState) => {
   };
 };
 
-export default connect(mapStateToProps, { getGameTypes })(SelectGame);
+export default connect(mapStateToProps, { getGameTypes, setSelectedGame })(
+  SelectGame
+);

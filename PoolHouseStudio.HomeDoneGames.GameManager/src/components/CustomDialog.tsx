@@ -40,7 +40,7 @@ const CustomDialog: React.FC<CustomDialogProps> = ({
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary" autoFocus>
-          Close
+          Guess I'll Go Read A Book.
         </Button>
       </DialogActions>
     </Dialog>

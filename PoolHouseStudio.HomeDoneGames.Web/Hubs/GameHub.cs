@@ -24,6 +24,10 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
 
         public async Task GenerateRoomCode(int gameTypeID)
         {
+            // TODO: create list to manage who has joined / left
+            // TODO: create manager group with unique identifier
+            // TODO: add caller to group if not already present
+
             try
             {
                 var response = await _roomService.CreateRoom(gameTypeID);

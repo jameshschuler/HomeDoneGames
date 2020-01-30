@@ -1,22 +1,11 @@
 import ActionType from "../../models/enums/ActionType";
-import GameStateEnum from "../../models/enums/GameState";
 import GameType from "../../models/GameType";
 
-export const setGameType = (gameType: GameType) => {
+export const setSelectedGame = (gameType: GameType) => {
   return {
-    type: ActionType.SetGameType,
+    type: ActionType.SetSelectedGameType,
     payload: {
-      gameType,
-      gameState: GameStateEnum.GameOptionsMenu
-    }
-  };
-};
-
-export const setGameState = (gameState: GameStateEnum) => {
-  return {
-    type: ActionType.UpdateState,
-    payload: {
-      gameState: gameState
+      gameType
     }
   };
 };
