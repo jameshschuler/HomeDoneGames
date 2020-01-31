@@ -14,7 +14,6 @@ import About from "./components/screens/About";
 import GameMenu from "./components/screens/GameMenu";
 import Lobby from "./components/screens/Lobby";
 import SelectGame from "./components/screens/SelectGame";
-import SimpleLoader from "./components/SimpleLoader";
 import GameType from "./models/GameType";
 import { callHealthcheck } from "./store/actions/GlobalActions";
 import { RootState } from "./store/reducers/RootReducer";
@@ -30,13 +29,15 @@ interface IAppProps {
   error: any;
   isHealthy: boolean;
   selectedGameType?: GameType;
+  loading: boolean;
 }
 
 const App: React.FC<IAppProps> = ({
   callHealthcheck,
   error,
   isHealthy,
-  selectedGameType
+  selectedGameType,
+  loading
 }) => {
   useEffect(() => {
     callHealthcheck();
@@ -61,34 +62,30 @@ const App: React.FC<IAppProps> = ({
           <Navbar />
           {hasError()}
           <Switch>
-            {isHealthy ? (
-              <>
-                <Route exact path="/play" component={SelectGame}></Route>
-                {selectedGameType ? (
-                  <>
-                    <Route
-                      exact
-                      path="/play/:gameTypeID/menu"
-                      component={GameMenu}
-                    ></Route>
-                    <Route
-                      exact
-                      path="/play/:gameTypeID/about"
-                      component={About}
-                    ></Route>
-                    <Route
-                      exact
-                      path="/play/:gameTypeID/lobby"
-                      component={Lobby}
-                    ></Route>
-                  </>
-                ) : (
-                  <Redirect to="/play" />
-                )}
-              </>
-            ) : (
-              <SimpleLoader />
-            )}
+            <>
+              <Route exact path="/play" component={SelectGame}></Route>
+              {selectedGameType ? (
+                <>
+                  <Route
+                    exact
+                    path="/play/:gameTypeID/menu"
+                    component={GameMenu}
+                  ></Route>
+                  <Route
+                    exact
+                    path="/play/:gameTypeID/about"
+                    component={About}
+                  ></Route>
+                  <Route
+                    exact
+                    path="/play/:gameTypeID/lobby"
+                    component={Lobby}
+                  ></Route>
+                </>
+              ) : (
+                <Redirect to="/play" />
+              )}
+            </>
           </Switch>
         </Router>
       </div>
@@ -100,6 +97,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     error: state.global.error,
     isHealthy: state.global.isHealthy,
+    loading: state.global.loading,
     selectedGameType: state.gameState.selectedGameType
   };
 };

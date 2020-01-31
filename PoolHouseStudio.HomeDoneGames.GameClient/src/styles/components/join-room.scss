@@ -1,0 +1,9 @@
+#join-room-form {
+  display: flex;
+  flex-direction: column;
+
+  .MuiTextField-root {
+    background-color: #fff;
+    margin-bottom: 1rem;
+  }
+}

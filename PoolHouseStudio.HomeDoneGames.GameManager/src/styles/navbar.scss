@@ -1,0 +1,31 @@
+#navbar {
+  border-bottom: 1px solid black;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 1rem 0;
+
+  ul {
+    list-style-type: none;
+    padding: 0;
+
+    a {
+      color: #000;
+      font-size: 1.25rem;
+      text-decoration: none;
+    }
+  }
+
+  #nav-left {
+    li {
+      margin-left: 1rem;
+    }
+  }
+
+  #nav-right {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    width: 200px;
+  }
+}

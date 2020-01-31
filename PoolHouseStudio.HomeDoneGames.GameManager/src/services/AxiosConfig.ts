@@ -5,8 +5,6 @@ const baseURL =
     ? process.env.REACT_APP_API_URL_DEV
     : process.env.REACT_APP_API_URL_PROD;
 
-// TODO: move error handling to axios config
-
 export const instance = axios.create({
   baseURL: baseURL,
   timeout: 5000

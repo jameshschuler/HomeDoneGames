@@ -2,6 +2,7 @@ import ActionType from "../../models/enums/ActionType";
 import { healthcheck } from "../../services/HealthcheckService";
 
 export const callHealthcheck = () => async (dispatch: any, getState: any) => {
+  dispatch({ type: ActionType.Loading });
   const response = await healthcheck();
 
   if (response && response.isHealthy) {

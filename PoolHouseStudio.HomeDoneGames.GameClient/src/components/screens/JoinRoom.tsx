@@ -1,4 +1,4 @@
-import { Button, Grid, Paper, TextField, Typography } from "@material-ui/core";
+import { Button, Grid, Paper, TextField } from "@material-ui/core";
 import React, { useState } from "react";
 
 interface JoinRoomState {
@@ -21,22 +21,13 @@ const JoinRoom: React.FC = () => {
   const submitForm = (e: Event) => {
     e.preventDefault();
     console.log("submitForm", values);
+    // TODO: send request to join group using room code
   };
+
   return (
     <Grid item xs={12} sm={8} id="join-room">
-      <div className="form-header">
-        <Typography gutterBottom variant="h4">
-          Pool House Studio
-        </Typography>
-        <Typography gutterBottom variant="h6">
-          Presents
-        </Typography>
-        <Typography gutterBottom variant="h5">
-          Home Done Games
-        </Typography>
-      </div>
       <Paper className="paper" elevation={0}>
-        <form onSubmit={(e: any) => submitForm(e)}>
+        <form id="join-room-form" onSubmit={(e: any) => submitForm(e)}>
           <TextField
             required
             id="roomCode"

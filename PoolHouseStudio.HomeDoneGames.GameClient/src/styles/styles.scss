@@ -1,18 +1,16 @@
 $backgroundColor: #f9f7f1;
 
 @import "./common/dialog.scss";
-@import "./navbar.scss";
+@import "./components/navbar.scss";
+@import "./components/join-room.scss";
 
 * {
   margin: 0;
 }
 
 body {
-  font-family: "Gloria Hallelujah", cursive !important;
-}
-
-#container {
   background-color: $backgroundColor;
+  font-family: "Gloria Hallelujah", cursive !important;
   min-height: 100vh;
 }
 

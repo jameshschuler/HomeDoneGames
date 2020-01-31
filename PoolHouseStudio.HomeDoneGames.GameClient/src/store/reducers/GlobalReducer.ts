@@ -1,19 +1,18 @@
 import { IAction } from "../../models/Action";
-import ActionType from "../../models/enums/ActionType";
+import { ActionType } from "../../models/enums/ActionType";
+import { IError } from "../../models/Error";
 
-export interface GlobalState {
-  isHealthy: boolean;
+export interface IGlobalState {
   loading: boolean;
-  error: any;
+  error: IError | null;
 }
 
-const initialState: GlobalState = {
-  error: undefined,
-  isHealthy: false,
+const initialState: IGlobalState = {
+  error: null,
   loading: false
 };
 
-const globalReducer = (state: GlobalState = initialState, action: IAction) => {
+const globalReducer = (state: IGlobalState = initialState, action: IAction) => {
   switch (action.type) {
     case ActionType.Loading:
       return {
@@ -31,12 +30,6 @@ const globalReducer = (state: GlobalState = initialState, action: IAction) => {
         ...state,
         loading: false,
         error: action.payload.error
-      };
-    case ActionType.Healthcheck:
-      return {
-        ...state,
-        isHealthy: action.payload.isHealthy,
-        loading: false
       };
     default:
       return state;

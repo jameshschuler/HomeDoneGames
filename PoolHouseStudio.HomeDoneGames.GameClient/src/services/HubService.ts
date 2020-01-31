@@ -12,7 +12,6 @@ const connectToHub = async (): Promise<boolean> => {
     try {
       connection = new HubConnectionBuilder().withUrl(baseUrl!).build();
       await connection.start();
-      console.log(connection);
       return true;
     } catch (err) {
       return false;
@@ -22,21 +21,11 @@ const connectToHub = async (): Promise<boolean> => {
   return true;
 };
 
-const generateRoomCode = async (gameTypeID: number) => {
-  try {
-    console.log(connection);
-    await connection.invoke("GenerateRoomCode", gameTypeID);
-  } catch (err) {
-    console.log({ ...err });
-  }
-};
-
 const getConnection = () => {
   return connection;
 };
 
 export default {
   connectToHub,
-  generateRoomCode,
   getConnection
 };

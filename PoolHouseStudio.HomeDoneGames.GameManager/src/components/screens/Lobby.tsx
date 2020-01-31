@@ -2,6 +2,7 @@ import { Grid, Paper } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
+import GameType from "../../models/GameType";
 import {
   connectToHub,
   generateRoomCode
@@ -14,6 +15,7 @@ interface ILobbyProps {
   generateRoomCode: (gameTypeID: number) => any;
   error: any;
   loading: boolean;
+  selectedGame?: GameType;
 }
 // TODO:
 // If no room and loading then show "Generating ROom Code..."
@@ -22,7 +24,8 @@ const Lobby: React.FC<ILobbyProps> = ({
   connectToHub,
   generateRoomCode,
   error,
-  loading
+  loading,
+  selectedGame
 }) => {
   useEffect(() => {
     // TODO: send request to get room code
@@ -32,8 +35,7 @@ const Lobby: React.FC<ILobbyProps> = ({
   const doStuff = async () => {
     await connectToHub();
     if (!error) {
-      console.log("Generate Room Code and add to group");
-      await generateRoomCode(-1);
+      await generateRoomCode(selectedGame?.gameTypeID!);
 
       // TODO: what to do in case of error? redirect somewhere?
     }
@@ -63,7 +65,8 @@ const Lobby: React.FC<ILobbyProps> = ({
 const mapStateToProps = (state: RootState) => {
   return {
     error: state.global.error,
-    loading: state.global.loading
+    loading: state.global.loading,
+    selectedGame: state.gameState.selectedGameType
   };
 };
 
