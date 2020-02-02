@@ -1,7 +1,28 @@
 import React from "react";
+import { connect } from "react-redux";
+import { IPlayer } from "../../models/Player";
+import { IRootState } from "../../store/reducers/RootReducer";
 
-const Lobby: React.FC = () => {
-  return <div>Lobby</div>;
+interface ILobbyProps {
+  players: IPlayer[];
+}
+
+const Lobby: React.FC<ILobbyProps> = ({ players }) => {
+  return (
+    <div>
+      Lobby
+      {players &&
+        players.map((player: IPlayer, index: number) => {
+          return <p>{player.name}</p>;
+        })}
+    </div>
+  );
 };
 
-export default Lobby;
+const mapStateToProps = (state: IRootState) => {
+  return {
+    players: state.hub.players
+  };
+};
+
+export default connect(mapStateToProps)(Lobby);

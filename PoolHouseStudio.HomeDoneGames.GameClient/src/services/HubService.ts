@@ -1,4 +1,6 @@
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
+import HubMethods from "../models/HubMethods";
+import { IJoinRoomRequest } from "../models/JoinRoomRequest";
 
 const baseUrl =
   process.env.NODE_ENV === "development"
@@ -25,7 +27,16 @@ const getConnection = () => {
   return connection;
 };
 
+const joinRoom = async (request: IJoinRoomRequest) => {
+  try {
+    await connection.invoke(HubMethods.JoinRoomAsClient, request);
+  } catch (err) {
+    console.log({ ...err });
+  }
+};
+
 export default {
   connectToHub,
-  getConnection
+  getConnection,
+  joinRoom
 };

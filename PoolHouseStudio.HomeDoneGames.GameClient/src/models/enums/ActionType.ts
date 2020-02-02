@@ -5,5 +5,7 @@ export enum ActionType {
   Error = "ERROR",
 
   // Hub
-  Connected = "CONNECTED"
+  Connected = "CONNECTED",
+  JoinRoom = "JOIN_ROOM",
+  PlayerJoined = "PLAYER_JOINED"
 }
