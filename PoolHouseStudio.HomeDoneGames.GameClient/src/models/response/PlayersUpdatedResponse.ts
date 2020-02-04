@@ -1,5 +1,5 @@
 import { IPlayer } from "../Player";
 
-export interface IPlayerJoined {
+export interface IPlayersUpdatedResponse {
   players: IPlayer[];
 }

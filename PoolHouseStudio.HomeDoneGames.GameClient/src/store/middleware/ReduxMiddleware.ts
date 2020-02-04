@@ -1,7 +1,7 @@
 import { ActionType } from "../../models/enums/ActionType";
 import HubMethods from "../../models/HubMethods";
 import { IHubResponse } from "../../models/HubResponse";
-import { IPlayerJoined } from "../../models/response/PlayerJoinedResponse";
+import { IPlayersUpdatedResponse } from "../../models/response/PlayersUpdatedResponse";
 import HubService from "../../services/HubService";
 
 export const signalRMiddleware = (store: any) => (next: any) => async (
@@ -34,7 +34,7 @@ export const signalRMiddleware = (store: any) => (next: any) => async (
     });
   };
 
-  const handlePlayerJoined = (response: IPlayerJoined) => {
+  const handlePlayersUpdated = (response: IPlayersUpdatedResponse) => {
     dispatch({
       type: ActionType.PlayerJoined,
       payload: {
@@ -43,15 +43,20 @@ export const signalRMiddleware = (store: any) => (next: any) => async (
     });
   };
 
+  const handlePlayerDisconnected = (response: any) => {
+    console.log("handlePlayerDisconnected", response);
+  };
+
   switch (action.type) {
     case ActionType.Connected:
       let connection = HubService.getConnection();
 
       // Register handlers
       if (connection) {
-        connection.on("SendSuccessResponse", handleSuccessResponse);
-        connection.on("SendErrorResponse", handleErrorResponse);
-        connection.on(HubMethods.PlayerJoined, handlePlayerJoined);
+        connection.on("SendSuccessResponseToCaller", handleSuccessResponse);
+        connection.on("SendErrorResponseToCaller", handleErrorResponse);
+        connection.on(HubMethods.PlayerJoined, handlePlayersUpdated);
+        connection.on("disconnected", handlePlayerDisconnected);
         // TODO: handle connection disconnect
       }
       break;

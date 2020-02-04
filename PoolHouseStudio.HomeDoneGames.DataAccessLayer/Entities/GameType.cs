@@ -4,7 +4,6 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace PoolHouseStudio.HomeDoneGames.DataAccessLayer.Entities
 {
-    [Table("GameType")]
     public class GameType : BaseEntity
     {
         public GameType()
@@ -16,6 +15,9 @@ namespace PoolHouseStudio.HomeDoneGames.DataAccessLayer.Entities
         [Key]
         public int GameTypeID { get; set; }
         public string GameName { get; set; }
+        public bool IsActive { get; set; }
+        public int MinPlayers { get; set; }
+        public int MaxPlayers { get; set; }
 
         public virtual ICollection<Room> Rooms { get; set; }
     }

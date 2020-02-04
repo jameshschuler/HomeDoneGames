@@ -11,6 +11,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
     public interface IRoomService
     {
         Task<CreateRoomResponse> CreateRoom(int gameTypeID);
+        Task<Room> GetRoom( string roomCode );
         Task<ValidateRoomResponse> ValidateRoom(string roomCode);
     }
 
@@ -34,6 +35,11 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
                 throw new NotFoundException("Invalid Game Type", $"Game Type ID {gameTypeID} is not valid.");
             }
 
+            if(!gameType.IsActive)
+            {
+                throw new NotFoundException( "Invalid Game Type", $"Game Type is not available at the moment. Please try again later!" );
+            }
+
             // TODO: ensure uniqueness among game type and room code
             var roomCode = GenerateRoomCode();
 
@@ -54,6 +60,11 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
                 RoomCode = room.RoomCode,
                 RoomID = room.RoomID
             };
+        }
+
+        public async Task<Room> GetRoom( string roomCode )
+        {
+            return await _roomRepository.FirstOrDefault( e => e.RoomCode == roomCode );
         }
 
         public async Task<ValidateRoomResponse> ValidateRoom(string roomCode)

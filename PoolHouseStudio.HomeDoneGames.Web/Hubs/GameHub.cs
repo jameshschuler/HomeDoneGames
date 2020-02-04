@@ -13,20 +13,33 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
 {
     public class GameHub : Hub
     {
+        private readonly IGameTypeService _gameTypeService;
         private readonly IRoomService _roomService;
+        private readonly IHubService _hubService;
 
         private IList _managers = new List<GameManager>();
 
-        private static Dictionary<string, Player> _players = new Dictionary<string, Player>();
+        public static Dictionary<string, Game> _games = new Dictionary<string, Game>();
 
-        public GameHub( IRoomService roomService )
+        public GameHub( IGameTypeService gameTypeService, IHubService hubService, IRoomService roomService )
         {
+            _gameTypeService = gameTypeService;
+            _hubService = hubService;
             _roomService = roomService;
         }
 
         public override async Task OnConnectedAsync()
         {
             await base.OnConnectedAsync();
+        }
+
+        public override async Task OnDisconnectedAsync( Exception exception )
+        {
+            // TODO: how can we get the room code in order to find the game to remove the player from?
+            // or should we just query the player list again when the client detects a disconnect event?
+            // TODO: _games.Remove( Context.ConnectionId );
+
+            await base.OnDisconnectedAsync( exception );
         }
 
         // TODO: verify connection is a valid game manager client app 
@@ -36,17 +49,20 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
             try
             {
                 var response = await _roomService.CreateRoom( gameTypeID );
+                
                 var guid = new Guid();
                 var name = $"GameManager_{guid}";
-
                 await Groups.AddToGroupAsync( Context.ConnectionId, name );
 
                 // TODO: add logic to prevent adding manager twice if they want to generate another room code
-                _managers.Add( new GameManager
+                var gameManager = new GameManager
                 {
                     ConnnectionId = Context.ConnectionId,
                     Name = name
-                } );
+                };
+
+                _managers.Add( gameManager );
+                _games.Add( response.RoomCode, new Game { GameManager = gameManager, GameTypeID = gameTypeID } );
 
                 var hubSuccessResponse = new HubSuccessResponse
                 {
@@ -55,11 +71,11 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
                     Method = "GenerateRoomCode"
                 };
 
-                await SendSuccessResponse( hubSuccessResponse );
+                await SendSuccessResponseToCaller( hubSuccessResponse );
             }
             catch ( Exception ex )
             {
-                await SendErrorResponse( new HubErrorResponse
+                await SendErrorResponseToCaller( new HubErrorResponse
                 {
                     Message = ex.Message,
                     Method = "GenerateRoomCode"
@@ -67,59 +83,78 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
             }
         }
 
-        
+        // TODO: move validation to separate method
         public async Task JoinRoomAsClient( JoinRoomRequest joinRoomRequest )
         {
-            // todo: ensure name is present
             if ( string.IsNullOrWhiteSpace(joinRoomRequest.Name) )
             {
-                await SendErrorResponse( new HubErrorResponse { Message = "Must enter a player name", Method = "JoinRoomAsClient", Title = "Validation Error" } );
+                await SendErrorResponseToCaller( new HubErrorResponse { Message = "Must enter a player name", Method = "JoinRoomAsClient", Title = "Validation Error" } );
                 return;
             }
 
-            var response = await _roomService.ValidateRoom( joinRoomRequest.RoomCode );
+            var roomCode = joinRoomRequest.RoomCode;
+            var response = await _roomService.ValidateRoom( roomCode );
             if ( !response.IsValid || response.IsExpired )
             {
-                await SendErrorResponse( new HubErrorResponse { Message = response.Message, Method = "JoinRoomAsClient", Title = "Room Error" } );
+                await SendErrorResponseToCaller( new HubErrorResponse { Message = response.Message, Method = "JoinRoomAsClient", Title = "Room Error" } );
                 return;
             }
 
-            var groupName = $"ClientGroup_{joinRoomRequest.RoomCode}";
-            await Groups.AddToGroupAsync( Context.ConnectionId, groupName );
+            var room = await _roomService.GetRoom(roomCode);
+            var game = _games.FirstOrDefault( e => e.Key == roomCode ).Value;
+            if (game == null)
+            {
+                game = new Game();
+                _games.Add( roomCode, game );
+            }
 
+            var groupName = $"ClientGroup_{roomCode}";
             var player = new Player
             {
                 Name = joinRoomRequest.Name,
-                RoomCode = joinRoomRequest.RoomCode,
+                RoomCode = roomCode,
                 GroupName = groupName
             };
-            _players.Add( Context.ConnectionId, player ); // TODO: is this even useful?
 
-            await SendSuccessResponse( new HubSuccessResponse { Data = new JoinRoomResponse {Player = player }, Message = "Joined!", Method = "JoinRoomAsClient" } );
+            if (game.Players.Count < room.GameType.MaxPlayers)
+            {
+                if ( game.Players.Any( e => e.Key == Context.ConnectionId ) )
+                {
+                    await SendErrorResponseToCaller( new HubErrorResponse { Message = "Player is already connected.", Method = "JoinRoomAsClient" } );
+                    return;
+                }
 
-            // TODO: update all clients and manager that player has joined
-            await Clients.Group( groupName ).SendAsync("PlayerJoined", new PlayerJoinedResponse { Players = _players.Values.ToList() } );
+                game.Players.Add( Context.ConnectionId, player );
+                await Groups.AddToGroupAsync( Context.ConnectionId, groupName );
+            }
+            else
+            {
+                // TODO: what to do with player joining if they are outside the max player count? add as spectator? 
+                await SendErrorResponseToCaller( new HubErrorResponse { Message = "Game is already full!", Method = "JoinRoomAsClient" } );
+                return;
+            }
+
+            await SendSuccessResponseToCaller( new HubSuccessResponse { Data = new JoinRoomResponse {
+                Description = room.GameType.Description,
+                GameName = room.GameType.GameName,
+                Player = player,
+                MinPlayers = room.GameType.MinPlayers,
+                RoomCode = room.RoomCode
+            }, Message = "Joined!", Method = "JoinRoomAsClient" } );
+            await Clients.Group( groupName ).SendAsync("PlayersUpdated", new PlayersUpdatedResponse { Players = game.Players.Values.ToList() } );
         }
 
-        public async Task SendSuccessResponse( HubSuccessResponse hubSuccessResponse )
+        public async Task SendSuccessResponseToCaller( HubSuccessResponse hubSuccessResponse )
         {
-            await Clients.Caller.SendAsync( "SendSuccessResponse", hubSuccessResponse );
+            await Clients.Caller.SendAsync( "SendSuccessResponseToCaller", hubSuccessResponse );
         }
 
-        public async Task SendErrorResponse( HubErrorResponse hubErrorResponse )
+        public async Task SendErrorResponseToCaller( HubErrorResponse hubErrorResponse )
         {
-            await Clients.Caller.SendAsync( "SendErrorResponse", hubErrorResponse );
+            await Clients.Caller.SendAsync( "SendErrorResponseToCaller", hubErrorResponse );
         }
 
         // TODO: implement or change methods to handle sending success/error messages to all clients
-        // TODO: make each player unique somehow
         // TODO: handle add/remove players
-    }
-
-    // TODO: temp
-    public class GameManager
-    {
-        public string ConnnectionId { get; set; }
-        public string Name { get; set; }
     }
 }

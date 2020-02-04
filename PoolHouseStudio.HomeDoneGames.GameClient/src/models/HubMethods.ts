@@ -1,6 +1,6 @@
 const HubMethods = {
   JoinRoomAsClient: "JoinRoomAsClient",
-  PlayerJoined: "PlayerJoined"
+  PlayerJoined: "PlayersUpdated"
 };
 
 export default HubMethods;

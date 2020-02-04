@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response
 {
-    public class PlayerJoinedResponse
+    public class PlayersUpdatedResponse
     {
-        public PlayerJoinedResponse()
+        public PlayersUpdatedResponse()
         {
             Players = new List<Player>();
         }

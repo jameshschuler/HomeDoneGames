@@ -7,5 +7,6 @@ namespace PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response
     public class GameTypeResponse
     {
         // TODO:
+
     }
 }
