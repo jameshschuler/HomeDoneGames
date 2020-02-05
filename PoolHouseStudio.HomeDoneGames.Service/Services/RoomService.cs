@@ -64,7 +64,8 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
 
         public async Task<Room> GetRoom( string roomCode )
         {
-            return await _roomRepository.FirstOrDefault( e => e.RoomCode == roomCode );
+            var includeProperties = string.Join( ",", "GameType" );
+            return await _roomRepository.FirstOrDefault( e => e.RoomCode == roomCode, includeProperties );
         }
 
         public async Task<ValidateRoomResponse> ValidateRoom(string roomCode)

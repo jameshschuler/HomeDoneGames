@@ -1,14 +1,15 @@
 import { IAction } from "../../models/Action";
 import { ActionType } from "../../models/enums/ActionType";
+import { IGameData } from "../../models/GameData";
 import { IPlayer } from "../../models/Player";
 
 export interface IHubState {
-  player: IPlayer | null;
+  gameData: IGameData | null;
   players: IPlayer[];
 }
 
 const initialState: IHubState = {
-  player: null,
+  gameData: null,
   players: []
 };
 
@@ -17,9 +18,9 @@ const hubReducer = (state: IHubState = initialState, action: IAction) => {
     case ActionType.JoinRoom:
       return {
         ...state,
-        player: action.payload.player
+        gameData: action.payload.gameData
       };
-    case ActionType.PlayerJoined:
+    case ActionType.PlayersUpdated:
       return {
         ...state,
         players: action.payload.players

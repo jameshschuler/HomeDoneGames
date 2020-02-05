@@ -18,7 +18,17 @@ export const signalRMiddleware = (store: any) => (next: any) => async (
         dispatch({
           type: ActionType.JoinRoom,
           payload: {
-            player: response.data
+            gameData: response.data
+          }
+        });
+        break;
+      case HubMethods.PlayersUpdated:
+        const { players } = response.data as IPlayersUpdatedResponse;
+        console.log(players);
+        dispatch({
+          type: ActionType.PlayersUpdated,
+          payload: {
+            players
           }
         });
         break;
@@ -30,15 +40,6 @@ export const signalRMiddleware = (store: any) => (next: any) => async (
       type: ActionType.Error,
       payload: {
         error: response
-      }
-    });
-  };
-
-  const handlePlayersUpdated = (response: IPlayersUpdatedResponse) => {
-    dispatch({
-      type: ActionType.PlayerJoined,
-      payload: {
-        players: response.players
       }
     });
   };
@@ -55,9 +56,9 @@ export const signalRMiddleware = (store: any) => (next: any) => async (
       if (connection) {
         connection.on("SendSuccessResponseToCaller", handleSuccessResponse);
         connection.on("SendErrorResponseToCaller", handleErrorResponse);
-        connection.on(HubMethods.PlayerJoined, handlePlayersUpdated);
+        // TODO: handle connection disconnect and reconnect
+        // https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-3.1#reconnect-clients
         connection.on("disconnected", handlePlayerDisconnected);
-        // TODO: handle connection disconnect
       }
       break;
   }

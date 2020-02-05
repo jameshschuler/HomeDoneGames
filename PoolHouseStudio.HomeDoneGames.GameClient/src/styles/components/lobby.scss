@@ -1,0 +1,18 @@
+#players {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+
+  .MuiChip-root {
+    margin: 0.25rem 0;
+  }
+}
+
+#actions {
+  justify-content: center;
+  display: flex;
+  margin-top: 2rem;
+
+  #start-game-button {
+  }
+}

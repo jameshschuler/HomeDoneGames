@@ -7,5 +7,5 @@ export enum ActionType {
   // Hub
   Connected = "CONNECTED",
   JoinRoom = "JOIN_ROOM",
-  PlayerJoined = "PLAYER_JOINED"
+  PlayersUpdated = "PLAYERS_UPDATED"
 }

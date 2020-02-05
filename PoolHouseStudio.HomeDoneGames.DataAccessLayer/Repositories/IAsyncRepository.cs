@@ -9,7 +9,7 @@ namespace PoolHouseStudio.HomeDoneGames.DataAccessLayer.Repositories
     public interface IAsyncRepository<T> where T : BaseEntity
     {
         Task<T> GetById(int id);
-        Task<T> FirstOrDefault(Expression<Func<T, bool>> predicate);
+        Task<T> FirstOrDefault(Expression<Func<T, bool>> predicate, string includeProperties = "");
 
         Task Add(T entity);
         Task Update(T entity);

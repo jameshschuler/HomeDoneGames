@@ -15,20 +15,20 @@ interface IJoinRoomState {
 interface IJoinRoomProps {
   joinRoom: (request: IJoinRoomRequest) => Promise<void>;
   history: any;
-  player: IPlayer | null;
+  me: IPlayer | undefined;
 }
 
-const JoinRoom: React.FC<IJoinRoomProps> = ({ joinRoom, history, player }) => {
+const JoinRoom: React.FC<IJoinRoomProps> = ({ joinRoom, history, me }) => {
   const [values, setValues] = useState<IJoinRoomState>({
     roomCode: "",
     playerName: ""
   });
 
   useEffect(() => {
-    if (player !== null) {
+    if (me) {
       history.push("/lobby");
     }
-  }, [player]);
+  }, [me]);
 
   const handleChange = (prop: keyof IJoinRoomState) => (
     event: React.ChangeEvent<HTMLInputElement>
@@ -92,7 +92,7 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({ joinRoom, history, player }) => {
 
 const mapStateToProps = (state: IRootState) => {
   return {
-    player: state.hub.player
+    me: state.hub.gameData?.player
   };
 };
 

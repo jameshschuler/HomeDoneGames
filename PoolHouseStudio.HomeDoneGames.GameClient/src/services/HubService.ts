@@ -12,7 +12,10 @@ let connection: HubConnection;
 const connectToHub = async (): Promise<boolean> => {
   if (!connection) {
     try {
-      connection = new HubConnectionBuilder().withUrl(baseUrl!).build();
+      connection = new HubConnectionBuilder()
+        .withUrl(baseUrl!)
+        .withAutomaticReconnect()
+        .build();
       await connection.start();
       return true;
     } catch (err) {

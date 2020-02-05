@@ -12,40 +12,47 @@ namespace PoolHouseStudio.HomeDoneGames.DataAccessLayer.Repositories
     {
         protected DataDbContext Context;
 
-        public Repository(DataDbContext context)
+        public Repository( DataDbContext context )
         {
             Context = context;
         }
 
         #region Public Methods
 
-        public async Task<T> GetById(int id) => await Context.Set<T>().FindAsync(id);
+        public async Task<T> GetById( int id ) => await Context.Set<T>().FindAsync( id );
 
-        public Task<T> FirstOrDefault(Expression<Func<T, bool>> predicate)
-            => Context.Set<T>().FirstOrDefaultAsync(predicate);
+        public Task<T> FirstOrDefault( Expression<Func<T, bool>> predicate, string includeProperties )
+        {
+            if ( !string.IsNullOrWhiteSpace( includeProperties ) )
+            {
+                return Context.Set<T>().Include( includeProperties ).FirstOrDefaultAsync( predicate );
+            }
 
-        public async Task Add(T entity)
+            return Context.Set<T>().FirstOrDefaultAsync( predicate );
+        }
+
+        public async Task Add( T entity )
         {
             entity.CreatedDate = DateTime.Now;
             entity.ModifiedDate = DateTime.Now;
 
             // await Context.AddAsync(entity);
-            await Context.Set<T>().AddAsync(entity);
+            await Context.Set<T>().AddAsync( entity );
             await Context.SaveChangesAsync();
         }
 
-        public Task Update(T entity)
+        public Task Update( T entity )
         {
             entity.ModifiedDate = DateTime.Now;
 
             // In case AsNoTracking is used
-            Context.Entry(entity).State = EntityState.Modified;
+            Context.Entry( entity ).State = EntityState.Modified;
             return Context.SaveChangesAsync();
         }
 
-        public Task Remove(T entity)
+        public Task Remove( T entity )
         {
-            Context.Set<T>().Remove(entity);
+            Context.Set<T>().Remove( entity );
             return Context.SaveChangesAsync();
         }
 
@@ -54,15 +61,15 @@ namespace PoolHouseStudio.HomeDoneGames.DataAccessLayer.Repositories
             return await Context.Set<T>().ToListAsync();
         }
 
-        public async Task<IEnumerable<T>> GetWhere(Expression<Func<T, bool>> predicate)
+        public async Task<IEnumerable<T>> GetWhere( Expression<Func<T, bool>> predicate )
         {
-            return await Context.Set<T>().Where(predicate).ToListAsync();
+            return await Context.Set<T>().Where( predicate ).ToListAsync();
         }
 
         public Task<int> CountAll() => Context.Set<T>().CountAsync();
 
-        public Task<int> CountWhere(Expression<Func<T, bool>> predicate)
-            => Context.Set<T>().CountAsync(predicate);
+        public Task<int> CountWhere( Expression<Func<T, bool>> predicate )
+            => Context.Set<T>().CountAsync( predicate );
 
         #endregion
     }

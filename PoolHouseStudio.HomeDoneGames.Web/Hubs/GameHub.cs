@@ -17,7 +17,7 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
         private readonly IRoomService _roomService;
         private readonly IHubService _hubService;
 
-        private IList _managers = new List<GameManager>();
+        private static Dictionary<string, GameManager> _managers = new Dictionary<string, GameManager>();
 
         public static Dictionary<string, Game> _games = new Dictionary<string, Game>();
 
@@ -35,10 +35,7 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
 
         public override async Task OnDisconnectedAsync( Exception exception )
         {
-            // TODO: how can we get the room code in order to find the game to remove the player from?
-            // or should we just query the player list again when the client detects a disconnect event?
-            // TODO: _games.Remove( Context.ConnectionId );
-
+            // TODO: Need to figure out a way to remove clients when they disconnect
             await base.OnDisconnectedAsync( exception );
         }
 
@@ -55,13 +52,19 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
                 await Groups.AddToGroupAsync( Context.ConnectionId, name );
 
                 // TODO: add logic to prevent adding manager twice if they want to generate another room code
-                var gameManager = new GameManager
-                {
-                    ConnnectionId = Context.ConnectionId,
-                    Name = name
-                };
+                
 
-                _managers.Add( gameManager );
+                var gameManager = _managers.FirstOrDefault( e => e.Key == Context.ConnectionId ).Value;
+                if ( gameManager == null )
+                {
+                    gameManager = new GameManager
+                    {
+                        ConnnectionId = Context.ConnectionId,
+                        Name = name
+                    };
+                    _managers.Add( Context.ConnectionId, gameManager );
+                } 
+
                 _games.Add( response.RoomCode, new Game { GameManager = gameManager, GameTypeID = gameTypeID } );
 
                 var hubSuccessResponse = new HubSuccessResponse
@@ -84,6 +87,7 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
         }
 
         // TODO: move validation to separate method
+        // TODO: Break into smaller methods / move into hubservice
         public async Task JoinRoomAsClient( JoinRoomRequest joinRoomRequest )
         {
             if ( string.IsNullOrWhiteSpace(joinRoomRequest.Name) )
@@ -141,7 +145,13 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
                 MinPlayers = room.GameType.MinPlayers,
                 RoomCode = room.RoomCode
             }, Message = "Joined!", Method = "JoinRoomAsClient" } );
-            await Clients.Group( groupName ).SendAsync("PlayersUpdated", new PlayersUpdatedResponse { Players = game.Players.Values.ToList() } );
+
+            await SendSuccessResponseToGroup( groupName, new HubSuccessResponse
+            {
+                Data = new PlayersUpdatedResponse { Players = game.Players.Values.ToList() },
+                Method = "PlayersUpdated",
+                Message = "A New Player Has Joined!"
+            } );
         }
 
         public async Task SendSuccessResponseToCaller( HubSuccessResponse hubSuccessResponse )
@@ -154,7 +164,14 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
             await Clients.Caller.SendAsync( "SendErrorResponseToCaller", hubErrorResponse );
         }
 
-        // TODO: implement or change methods to handle sending success/error messages to all clients
-        // TODO: handle add/remove players
+        public async Task SendSuccessResponseToGroup( string groupName, HubSuccessResponse hubSuccessResponse )
+        {
+            await Clients.Group( groupName ).SendAsync( "SendSuccessResponseToCaller", hubSuccessResponse );
+        }
+
+        public async Task SendErrorResponseToGroup( string groupName, HubErrorResponse hubErrorResponse )
+        {
+            await Clients.Group( groupName ).SendAsync( "SendErrorResponseToCaller", hubErrorResponse );
+        }
     }
 }
