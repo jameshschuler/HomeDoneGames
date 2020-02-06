@@ -20,6 +20,7 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
         private static Dictionary<string, GameManager> _managers = new Dictionary<string, GameManager>();
 
         public static Dictionary<string, Game> _games = new Dictionary<string, Game>();
+        public static Dictionary<string, Player> _connectedPlayers = new Dictionary<string, Player>();
 
         public GameHub( IGameTypeService gameTypeService, IHubService hubService, IRoomService roomService )
         {
@@ -35,24 +36,37 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
 
         public override async Task OnDisconnectedAsync( Exception exception )
         {
-            // TODO: Need to figure out a way to remove clients when they disconnect
+            var response = _hubService.DisconnectPlayer( Context.ConnectionId );
+            if ( response != null )
+            {
+                var successResponse = (HubSuccessResponse) response;
+                var data = (PlayersUpdatedResponse) successResponse.Data;
+
+                await SendSuccessResponseToGroup( data.GroupName, new HubSuccessResponse
+                {
+                    Data = data,
+                    Method = "PlayersUpdated",
+                    Message = "A Player Has Disconnected"
+                } );
+            }
+
             await base.OnDisconnectedAsync( exception );
         }
 
         // TODO: verify connection is a valid game manager client app 
+        // TODO: move into hub service
         // [Authorize]
         public async Task GenerateRoomCode( int gameTypeID )
         {
             try
             {
                 var response = await _roomService.CreateRoom( gameTypeID );
-                
+
                 var guid = new Guid();
                 var name = $"GameManager_{guid}";
                 await Groups.AddToGroupAsync( Context.ConnectionId, name );
 
                 // TODO: add logic to prevent adding manager twice if they want to generate another room code
-                
 
                 var gameManager = _managers.FirstOrDefault( e => e.Key == Context.ConnectionId ).Value;
                 if ( gameManager == null )
@@ -63,7 +77,7 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
                         Name = name
                     };
                     _managers.Add( Context.ConnectionId, gameManager );
-                } 
+                }
 
                 _games.Add( response.RoomCode, new Game { GameManager = gameManager, GameTypeID = gameTypeID } );
 
@@ -86,69 +100,32 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
             }
         }
 
-        // TODO: move validation to separate method
-        // TODO: Break into smaller methods / move into hubservice
         public async Task JoinRoomAsClient( JoinRoomRequest joinRoomRequest )
         {
-            if ( string.IsNullOrWhiteSpace(joinRoomRequest.Name) )
+            var result = await ValidateJoinRoomRequest( joinRoomRequest );
+            if ( result != null )
             {
-                await SendErrorResponseToCaller( new HubErrorResponse { Message = "Must enter a player name", Method = "JoinRoomAsClient", Title = "Validation Error" } );
+                await SendErrorResponseToCaller( result );
                 return;
             }
 
-            var roomCode = joinRoomRequest.RoomCode;
-            var response = await _roomService.ValidateRoom( roomCode );
-            if ( !response.IsValid || response.IsExpired )
+            var response = await _hubService.JoinRoom( Context.ConnectionId, joinRoomRequest );
+
+            if ( response.GetType() == typeof( HubErrorResponse ) )
             {
-                await SendErrorResponseToCaller( new HubErrorResponse { Message = response.Message, Method = "JoinRoomAsClient", Title = "Room Error" } );
+                await SendErrorResponseToCaller( (HubErrorResponse) response );
                 return;
             }
 
-            var room = await _roomService.GetRoom(roomCode);
-            var game = _games.FirstOrDefault( e => e.Key == roomCode ).Value;
-            if (game == null)
-            {
-                game = new Game();
-                _games.Add( roomCode, game );
-            }
+            var successResponse = (HubSuccessResponse) response;
+            var data = (JoinRoomResponse) successResponse.Data;
 
-            var groupName = $"ClientGroup_{roomCode}";
-            var player = new Player
-            {
-                Name = joinRoomRequest.Name,
-                RoomCode = roomCode,
-                GroupName = groupName
-            };
+            await Groups.AddToGroupAsync( Context.ConnectionId, data.GroupName );
+            await SendSuccessResponseToCaller( successResponse );
 
-            if (game.Players.Count < room.GameType.MaxPlayers)
+            await SendSuccessResponseToGroup( data.GroupName, new HubSuccessResponse
             {
-                if ( game.Players.Any( e => e.Key == Context.ConnectionId ) )
-                {
-                    await SendErrorResponseToCaller( new HubErrorResponse { Message = "Player is already connected.", Method = "JoinRoomAsClient" } );
-                    return;
-                }
-
-                game.Players.Add( Context.ConnectionId, player );
-                await Groups.AddToGroupAsync( Context.ConnectionId, groupName );
-            }
-            else
-            {
-                // TODO: what to do with player joining if they are outside the max player count? add as spectator? 
-                await SendErrorResponseToCaller( new HubErrorResponse { Message = "Game is already full!", Method = "JoinRoomAsClient" } );
-                return;
-            }
-
-            await SendSuccessResponseToCaller( new HubSuccessResponse { Data = new JoinRoomResponse {
-                Description = room.GameType.Description,
-                GameName = room.GameType.GameName,
-                Player = player,
-                MinPlayers = room.GameType.MinPlayers,
-                RoomCode = room.RoomCode
-            }, Message = "Joined!", Method = "JoinRoomAsClient" } );
-
-            await SendSuccessResponseToGroup( groupName, new HubSuccessResponse
-            {
-                Data = new PlayersUpdatedResponse { Players = game.Players.Values.ToList() },
+                Data = new PlayersUpdatedResponse { Players = _hubService.GetPlayers( data.RoomCode ) },
                 Method = "PlayersUpdated",
                 Message = "A New Player Has Joined!"
             } );
@@ -173,5 +150,26 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
         {
             await Clients.Group( groupName ).SendAsync( "SendErrorResponseToCaller", hubErrorResponse );
         }
+
+        #region Private Methods
+
+        private async Task<HubErrorResponse> ValidateJoinRoomRequest( JoinRoomRequest request )
+        {
+            if ( string.IsNullOrWhiteSpace( request.Name ) )
+            {
+                return new HubErrorResponse { Message = "Must enter a player name", Method = "JoinRoomAsClient", Title = "Validation Error" };
+            }
+
+            var roomCode = request.RoomCode;
+            var response = await _roomService.ValidateRoom( roomCode );
+            if ( !response.IsValid || response.IsExpired )
+            {
+                return new HubErrorResponse { Message = response.Message, Method = "JoinRoomAsClient", Title = "Room Error" };
+            }
+
+            return null;
+        }
+
+        #endregion
     }
 }

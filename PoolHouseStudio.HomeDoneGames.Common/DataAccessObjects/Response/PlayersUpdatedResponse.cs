@@ -10,6 +10,8 @@ namespace PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response
             Players = new List<Player>();
         }
 
+        public string GroupName { get; set; }
+
         public IList<Player> Players { get; set; }
     }
 }
