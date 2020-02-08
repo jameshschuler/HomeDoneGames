@@ -1,12 +1,8 @@
 ﻿using Microsoft.AspNetCore.SignalR;
 using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Request;
 using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response;
-using PoolHouseStudio.HomeDoneGames.Common.Models;
 using PoolHouseStudio.HomeDoneGames.Service.Services;
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
@@ -16,11 +12,6 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
         private readonly IGameTypeService _gameTypeService;
         private readonly IRoomService _roomService;
         private readonly IHubService _hubService;
-
-        private static Dictionary<string, GameManager> _managers = new Dictionary<string, GameManager>();
-
-        public static Dictionary<string, Game> _games = new Dictionary<string, Game>();
-        public static Dictionary<string, Player> _connectedPlayers = new Dictionary<string, Player>();
 
         public GameHub( IGameTypeService gameTypeService, IHubService hubService, IRoomService roomService )
         {
@@ -60,35 +51,21 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
         {
             try
             {
-                var response = await _roomService.CreateRoom( gameTypeID );
+                var createRoomResponse = await _roomService.CreateRoom( gameTypeID );
 
-                var guid = new Guid();
-                var name = $"GameManager_{guid}";
-                await Groups.AddToGroupAsync( Context.ConnectionId, name );
+                var response = _hubService.CreateGame( Context.ConnectionId, createRoomResponse );
 
-                // TODO: add logic to prevent adding manager twice if they want to generate another room code
-
-                var gameManager = _managers.FirstOrDefault( e => e.Key == Context.ConnectionId ).Value;
-                if ( gameManager == null )
+                if ( response.GetType() == typeof( HubErrorResponse ) )
                 {
-                    gameManager = new GameManager
-                    {
-                        ConnnectionId = Context.ConnectionId,
-                        Name = name
-                    };
-                    _managers.Add( Context.ConnectionId, gameManager );
+                    await SendErrorResponseToCaller( (HubErrorResponse) response );
+                    return;
                 }
 
-                _games.Add( response.RoomCode, new Game { GameManager = gameManager, GameTypeID = gameTypeID } );
-
-                var hubSuccessResponse = new HubSuccessResponse
-                {
-                    Data = response,
-                    Message = "Room was created.",
-                    Method = "GenerateRoomCode"
-                };
-
-                await SendSuccessResponseToCaller( hubSuccessResponse );
+                var successResponse = (HubSuccessResponse) response;
+                var data = (CreateGameResponse) successResponse.Data;
+                
+                await Groups.AddToGroupAsync( Context.ConnectionId, data.GameManager.Name );
+                await SendSuccessResponseToCaller( successResponse );
             }
             catch ( Exception ex )
             {

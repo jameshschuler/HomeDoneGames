@@ -1,15 +1,15 @@
 import { IAction } from "../../models/Action";
 import ActionType from "../../models/enums/ActionType";
 
-export interface ManageState {
+export interface IHubState {
   room: any;
 }
 
-const initialState: ManageState = {
+const initialState: IHubState = {
   room: undefined
 };
 
-const managerReducer = (state: ManageState = initialState, action: IAction) => {
+const hubReducer = (state: IHubState = initialState, action: IAction) => {
   switch (action.type) {
     case ActionType.GeneratedRoomCode:
       return {
@@ -21,4 +21,4 @@ const managerReducer = (state: ManageState = initialState, action: IAction) => {
   }
 };
 
-export default managerReducer;
+export default hubReducer;

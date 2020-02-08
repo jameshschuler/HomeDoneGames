@@ -1,21 +1,21 @@
 import { combineReducers } from "redux";
-import dataStoreReducer, { DataStoreState } from "./DataStoreReducer";
-import gameStateReducer, { GameState } from "./GameStateReducer";
-import globalReducer, { GlobalState } from "./GlobalReducer";
-import manageReducer, { ManageState } from "./ManageReducer";
+import dataStoreReducer, { IDataStoreState } from "./DataStoreReducer";
+import gameStateReducer, { IGameState } from "./GameStateReducer";
+import globalReducer, { IGlobalState } from "./GlobalReducer";
+import hubReducer, { IHubState } from "./HubReducer";
 
 export interface RootState {
-  dataStore: DataStoreState;
-  gameState: GameState;
-  global: GlobalState;
-  manage: ManageState;
+  dataStore: IDataStoreState;
+  gameState: IGameState;
+  global: IGlobalState;
+  hub: IHubState;
 }
 
 const rootReducer = combineReducers({
   dataStore: dataStoreReducer,
   gameState: gameStateReducer,
   global: globalReducer,
-  manage: manageReducer
+  hub: hubReducer
 });
 
 export default rootReducer;

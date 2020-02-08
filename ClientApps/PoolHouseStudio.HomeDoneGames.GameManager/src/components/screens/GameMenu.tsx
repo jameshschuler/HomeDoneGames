@@ -1,7 +1,7 @@
 import { Button, Grid, Paper } from "@material-ui/core";
 import React from "react";
 import { connect } from "react-redux";
-import { Link, RouteComponentProps } from "react-router-dom";
+import { RouteComponentProps } from "react-router-dom";
 import GameType from "../../models/GameType";
 import { RootState } from "../../store/reducers/RootReducer";
 
@@ -21,6 +21,11 @@ const GameMenu: React.FC<GameMenuProps> = ({ gameTypes, match }) => {
     }
   );
 
+  const selectMenuOption = (gameTypeID: number | undefined) => {
+    // <Link to={`/play/${selectedGameType?.gameTypeID}/lobby`}>
+    //             </Link>
+  };
+
   return (
     <>
       <Grid container alignItems="center" justify="center" spacing={0}>
@@ -28,15 +33,19 @@ const GameMenu: React.FC<GameMenuProps> = ({ gameTypes, match }) => {
           <Paper elevation={0} className="paper">
             <h1 className="title">{selectedGameType?.gameName}</h1>
             <div className="menu">
-              <Button size="large" variant="outlined">
-                <Link to={`/play/${selectedGameType?.gameTypeID}/lobby`}>
-                  Play
-                </Link>
+              <Button
+                size="large"
+                variant="outlined"
+                onClick={() => selectMenuOption(selectedGameType?.gameTypeID)}
+              >
+                Play
               </Button>
-              <Button size="large" variant="outlined">
-                <Link to={`/play/${selectedGameType?.gameTypeID}/about`}>
-                  About
-                </Link>
+              <Button
+                size="large"
+                variant="outlined"
+                onClick={() => selectMenuOption(selectedGameType?.gameTypeID)}
+              >
+                About
               </Button>
             </div>
           </Paper>

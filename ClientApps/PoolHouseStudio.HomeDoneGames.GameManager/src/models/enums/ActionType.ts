@@ -3,10 +3,9 @@ enum ActionType {
   Loading = "LOADING",
   Success = "SUCCESS",
   Error = "ERROR",
-  Healthcheck = "HEALTHCHECK",
 
   // Game Type
-  SetSelectedGameType = "SET_SELECTED_GAME_TYPE",
+  SetSelectedGame = "SET_SELECTED_GAME",
   FetchGameTypes = "FETCH_GAME_TYPES",
 
   // Hub

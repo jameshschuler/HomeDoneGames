@@ -47,7 +47,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             {
                 GameType = gameType,
                 RoomCode = roomCode,
-                ExpireDate = DateTime.Now.AddMinutes(30) // TODO:
+                ExpireDate = DateTime.Now.AddMinutes(60)
             };
 
             await _roomRepository.Add(room);

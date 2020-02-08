@@ -2,16 +2,16 @@ import { IAction } from "../../models/Action";
 import ActionType from "../../models/enums/ActionType";
 import GameType from "../../models/GameType";
 
-export interface DataStoreState {
+export interface IDataStoreState {
   gameTypes: GameType[];
 }
 
-const initialState: DataStoreState = {
+const initialState: IDataStoreState = {
   gameTypes: []
 };
 
 const dataStoreReducer = (
-  state: DataStoreState = initialState,
+  state: IDataStoreState = initialState,
   action: IAction
 ) => {
   switch (action.type) {

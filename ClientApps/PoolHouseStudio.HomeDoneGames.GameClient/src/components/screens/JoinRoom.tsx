@@ -2,6 +2,7 @@ import { Button, Grid, Paper, TextField } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import React, { useEffect, useState } from "react";
 import { connect } from "react-redux";
+import { IError } from "../../models/Error";
 import { IJoinRoomRequest } from "../../models/JoinRoomRequest";
 import { IPlayer } from "../../models/Player";
 import { joinRoom } from "../../store/actions/HubActions";
@@ -13,12 +14,18 @@ interface IJoinRoomState {
 }
 
 interface IJoinRoomProps {
+  error: IError | null;
   joinRoom: (request: IJoinRoomRequest) => Promise<void>;
   history: any;
   me: IPlayer | undefined;
 }
 
-const JoinRoom: React.FC<IJoinRoomProps> = ({ joinRoom, history, me }) => {
+const JoinRoom: React.FC<IJoinRoomProps> = ({
+  error,
+  joinRoom,
+  history,
+  me
+}) => {
   const [values, setValues] = useState<IJoinRoomState>({
     roomCode: "",
     playerName: ""
@@ -66,6 +73,7 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({ joinRoom, history, me }) => {
             placeholder="Enter a room code"
             onChange={handleChange("roomCode")}
             value={values.roomCode}
+            disabled={error !== null}
           />
           <TextField
             required
@@ -75,12 +83,14 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({ joinRoom, history, me }) => {
             placeholder="Enter your name"
             onChange={handleChange("playerName")}
             value={values.playerName}
+            disabled={error !== null}
           />
           <Button
             size="medium"
             variant="contained"
             color="primary"
             type="submit"
+            disabled={error !== null}
           >
             Join!
           </Button>
@@ -92,7 +102,8 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({ joinRoom, history, me }) => {
 
 const mapStateToProps = (state: IRootState) => {
   return {
-    me: state.hub.gameData?.player
+    me: state.hub.gameData?.player,
+    error: state.global.error
   };
 };
 

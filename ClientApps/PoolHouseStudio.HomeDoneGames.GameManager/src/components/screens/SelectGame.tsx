@@ -2,7 +2,6 @@ import { Button, Paper } from "@material-ui/core";
 import Grid from "@material-ui/core/Grid";
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
-import { Link } from "react-router-dom";
 import GameType from "../../models/GameType";
 import { getGameTypes } from "../../store/actions/DataStoreActions";
 import { setSelectedGame } from "../../store/actions/GameStateActions";
@@ -11,20 +10,27 @@ import SimpleLoader from "../SimpleLoader";
 
 interface ISelectGameProps {
   gameTypes: GameType[];
-  getGameTypes: () => any;
+  history: any;
   loading: boolean;
+  getGameTypes: () => any;
   setSelectedGame: (gameType: GameType) => any;
 }
 
 const SelectGame: React.FC<ISelectGameProps> = ({
   gameTypes,
-  getGameTypes,
+  history,
   loading,
+  getGameTypes,
   setSelectedGame
 }) => {
   useEffect(() => {
     getGameTypes();
   }, []);
+
+  const selectGame = (gameType: GameType) => {
+    setSelectedGame(gameType);
+    history.push(`/play/${gameType.gameTypeID}/menu`);
+  };
 
   return (
     <>
@@ -45,11 +51,9 @@ const SelectGame: React.FC<ISelectGameProps> = ({
                           key={index}
                           size="large"
                           variant="outlined"
-                          onClick={() => setSelectedGame(gameType)}
+                          onClick={() => selectGame(gameType)}
                         >
-                          <Link to={`/play/${gameType.gameTypeID}/menu`}>
-                            {gameType.gameName}
-                          </Link>
+                          {gameType.gameName}
                         </Button>
                       );
                     })}

@@ -2,6 +2,7 @@
 using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response;
 using PoolHouseStudio.HomeDoneGames.Common.Models;
 using PoolHouseStudio.HomeDoneGames.DataAccessLayer.Repositories;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,6 +12,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
     public interface IHubService
     {
         HubResponse DisconnectPlayer( string connectionId);
+        HubResponse CreateGame( string connectionId, CreateRoomResponse createRoomResponse );
         IList<Player> GetPlayers( string roomCode );
         Task<HubResponse> JoinRoom( string connectionId, JoinRoomRequest joinRoomRequest );
     }
@@ -20,16 +22,18 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
         // connection id
         private static Dictionary<string, Player> _players = new Dictionary<string, Player>();
 
+        // connection id
+        private static Dictionary<string, GameManager> _managers = new Dictionary<string, GameManager>();
+
         // room code
         public static Dictionary<string, Game> _games = new Dictionary<string, Game>();
 
         private readonly IRoomRepository _roomRepository;
 
-        public HubService( IRoomRepository roomRepository)
+        public HubService( IRoomRepository roomRepository )
         {
             _roomRepository = roomRepository;
         }
-
 
         public HubResponse DisconnectPlayer( string connectionId )
         {
@@ -52,6 +56,56 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
                     GroupName = player.GroupName,
                     Players = game.Players.Values.ToList()
                 }
+            };
+        }
+
+        public HubResponse CreateGame( string connectionId, CreateRoomResponse createRoomResponse )
+        {
+            var guid = new Guid();
+            var name = $"GameManager_{guid}";
+
+            var gameManager = new GameManager
+            {
+                ConnnectionId = connectionId,
+                Name = name
+            };
+
+            if ( _managers.FirstOrDefault(e => e.Key == connectionId).Value == null )
+            {
+                _managers.Add( connectionId, gameManager );
+            } 
+            else
+            {
+                return new HubErrorResponse { Message = "Game Manager already exists!", Method = "GenerateRoomCode" };
+            }
+
+            var game = new Game
+            {
+                GameTypeID = createRoomResponse.GameTypeID,
+                RoomCode = createRoomResponse.RoomCode,
+                GameManager = gameManager
+            };
+
+            if ( _games.FirstOrDefault( e => e.Key == createRoomResponse.RoomCode ).Value == null )
+            {
+                _games.Add( createRoomResponse.RoomCode, game );
+            }
+            else
+            {
+                return new HubErrorResponse { Message = "Game already exists!", Method = "GenerateRoomCode" };
+            }
+
+            return new HubSuccessResponse
+            {
+                Data = new CreateGameResponse
+                {
+                    GameManager = gameManager,
+                    GameName = createRoomResponse.GameName,
+                    GameTypeID = createRoomResponse.GameTypeID,
+                    RoomCode = createRoomResponse.RoomCode
+                },
+                Message = "Room was created!",
+                Method = "GenerateRoomCode"
             };
         }
 

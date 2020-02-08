@@ -10,9 +10,11 @@ let connection: HubConnection;
 const connectToHub = async (): Promise<boolean> => {
   if (!connection) {
     try {
-      connection = new HubConnectionBuilder().withUrl(baseUrl!).build();
+      connection = new HubConnectionBuilder()
+        .withUrl(baseUrl!)
+        .withAutomaticReconnect()
+        .build();
       await connection.start();
-      console.log(connection);
       return true;
     } catch (err) {
       return false;

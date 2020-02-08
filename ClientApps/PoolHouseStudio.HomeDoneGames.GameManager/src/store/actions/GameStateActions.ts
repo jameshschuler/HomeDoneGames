@@ -3,9 +3,9 @@ import GameType from "../../models/GameType";
 
 export const setSelectedGame = (gameType: GameType) => {
   return {
-    type: ActionType.SetSelectedGameType,
+    type: ActionType.SetSelectedGame,
     payload: {
-      gameType
+      selectedGame: gameType
     }
   };
 };

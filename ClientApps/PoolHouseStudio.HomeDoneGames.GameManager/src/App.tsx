@@ -1,6 +1,6 @@
 import { createMuiTheme } from "@material-ui/core/styles";
 import { ThemeProvider } from "@material-ui/styles";
-import React, { useEffect } from "react";
+import React from "react";
 import { connect } from "react-redux";
 import {
   BrowserRouter as Router,
@@ -8,14 +8,13 @@ import {
   Route,
   Switch
 } from "react-router-dom";
-import CustomDialog from "./components/CustomDialog";
 import Navbar from "./components/Navbar";
 import About from "./components/screens/About";
 import GameMenu from "./components/screens/GameMenu";
 import Lobby from "./components/screens/Lobby";
 import SelectGame from "./components/screens/SelectGame";
+import { IError } from "./models/Error";
 import GameType from "./models/GameType";
-import { callHealthcheck } from "./store/actions/GlobalActions";
 import { RootState } from "./store/reducers/RootReducer";
 
 const theme = createMuiTheme({
@@ -25,46 +24,21 @@ const theme = createMuiTheme({
 });
 
 interface IAppProps {
-  callHealthcheck: () => void;
-  error: any;
-  isHealthy: boolean;
-  selectedGameType?: GameType;
+  error: IError | null;
   loading: boolean;
+  selectedGame: GameType | null;
 }
 
-const App: React.FC<IAppProps> = ({
-  callHealthcheck,
-  error,
-  isHealthy,
-  selectedGameType,
-  loading
-}) => {
-  useEffect(() => {
-    callHealthcheck();
-  }, [callHealthcheck]);
-
-  const hasError = () => {
-    if (error) {
-      return (
-        <CustomDialog
-          title={error.title}
-          message={error.message}
-          open={true}
-        ></CustomDialog>
-      );
-    }
-  };
-
+const App: React.FC<IAppProps> = ({ error, loading, selectedGame }) => {
   return (
     <ThemeProvider theme={theme}>
       <div id="container">
         <Router>
           <Navbar />
-          {hasError()}
           <Switch>
             <>
               <Route exact path="/play" component={SelectGame}></Route>
-              {selectedGameType ? (
+              {selectedGame ? (
                 <>
                   <Route
                     exact
@@ -96,10 +70,9 @@ const App: React.FC<IAppProps> = ({
 const mapStateToProps = (state: RootState) => {
   return {
     error: state.global.error,
-    isHealthy: state.global.isHealthy,
     loading: state.global.loading,
-    selectedGameType: state.gameState.selectedGameType
+    selectedGame: state.gameState.selectedGame
   };
 };
 
-export default connect(mapStateToProps, { callHealthcheck })(App);
+export default connect(mapStateToProps)(App);

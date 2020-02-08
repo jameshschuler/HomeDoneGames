@@ -3,10 +3,7 @@ import Typography from "@material-ui/core/Typography";
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
 import GameType from "../../models/GameType";
-import {
-  connectToHub,
-  generateRoomCode
-} from "../../store/actions/ManageActions";
+import { connectToHub, generateRoomCode } from "../../store/actions/HubActions";
 import { RootState } from "../../store/reducers/RootReducer";
 import SimpleLoader from "../SimpleLoader";
 
@@ -15,7 +12,7 @@ interface ILobbyProps {
   generateRoomCode: (gameTypeID: number) => any;
   error: any;
   loading: boolean;
-  selectedGame?: GameType;
+  selectedGame: GameType | null;
 }
 // TODO:
 // If no room and loading then show "Generating ROom Code..."
@@ -66,7 +63,7 @@ const mapStateToProps = (state: RootState) => {
   return {
     error: state.global.error,
     loading: state.global.loading,
-    selectedGame: state.gameState.selectedGameType
+    selectedGame: state.gameState.selectedGame
   };
 };
 

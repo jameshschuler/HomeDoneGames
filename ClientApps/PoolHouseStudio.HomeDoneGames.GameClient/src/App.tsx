@@ -29,7 +29,6 @@ interface IAppProps {
 
 const App: React.FC<IAppProps> = ({ error, loading, connectToHub }) => {
   useEffect(() => {
-    // TODO: make connection to hub
     connectToHub();
   }, []);
 
@@ -45,7 +44,7 @@ const App: React.FC<IAppProps> = ({ error, loading, connectToHub }) => {
             <SimpleLoader />
           ) : (
             <Switch>
-              {/* <Redirect from="/" to="/join" component={} /> */}
+              <Route exact path="/" component={JoinRoom} />
               <Route exact path="/join" component={JoinRoom} />
               <Route exact path="/lobby" component={Lobby} />
               <Route exact path="/play" component={Play} />

@@ -15,7 +15,7 @@ export const connectToHub = () => async (dispatch: any, getState: any) => {
       payload: {
         error: {
           title: "Connection Error",
-          message: "Unable to connect to game server. Please try again!"
+          message: "Unable to connect to game server. Please try again later!"
         }
       }
     });
