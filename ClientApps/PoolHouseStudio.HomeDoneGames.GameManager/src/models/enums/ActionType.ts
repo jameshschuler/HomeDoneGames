@@ -12,7 +12,8 @@ enum ActionType {
   Connected = "CONNECTED",
   JoinGroup = "JOIN_GROUP",
   GenerateRoomCode = "GENERATE_ROOM_CODE",
-  GeneratedRoomCode = "GENERATED_ROOM_CODE"
+  GeneratedRoomCode = "GENERATED_ROOM_CODE",
+  PlayersUpdated = "PLAYERS_UPDATED"
 }
 
 export default ActionType;

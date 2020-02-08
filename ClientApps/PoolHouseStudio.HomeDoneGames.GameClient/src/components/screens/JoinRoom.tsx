@@ -54,7 +54,7 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({
   };
 
   return (
-    <Grid item xs={12} sm={8} id="join-room">
+    <Grid item xs={12} sm={8} alignContent={"center"} id="join-room">
       <Paper className="paper" elevation={0}>
         <Typography variant="h6">
           Enter a room code and name to get started!
@@ -73,7 +73,6 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({
             placeholder="Enter a room code"
             onChange={handleChange("roomCode")}
             value={values.roomCode}
-            disabled={error !== null}
           />
           <TextField
             required
@@ -83,14 +82,12 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({
             placeholder="Enter your name"
             onChange={handleChange("playerName")}
             value={values.playerName}
-            disabled={error !== null}
           />
           <Button
             size="medium"
             variant="contained"
             color="primary"
             type="submit"
-            disabled={error !== null}
           >
             Join!
           </Button>

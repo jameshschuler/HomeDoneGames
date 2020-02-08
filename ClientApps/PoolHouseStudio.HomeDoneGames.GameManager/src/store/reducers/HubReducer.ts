@@ -1,12 +1,16 @@
 import { IAction } from "../../models/Action";
 import ActionType from "../../models/enums/ActionType";
+import { IGameData } from "../../models/GameData";
+import { IPlayer } from "../../models/Player";
 
 export interface IHubState {
-  room: any;
+  game: IGameData | null;
+  players: IPlayer[];
 }
 
 const initialState: IHubState = {
-  room: undefined
+  game: null,
+  players: []
 };
 
 const hubReducer = (state: IHubState = initialState, action: IAction) => {
@@ -14,7 +18,12 @@ const hubReducer = (state: IHubState = initialState, action: IAction) => {
     case ActionType.GeneratedRoomCode:
       return {
         ...state,
-        room: action.payload.room
+        game: action.payload.game
+      };
+    case ActionType.PlayersUpdated:
+      return {
+        ...state,
+        players: action.payload.players
       };
     default:
       return state;

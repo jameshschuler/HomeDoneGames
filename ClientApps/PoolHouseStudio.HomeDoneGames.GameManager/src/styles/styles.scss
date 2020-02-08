@@ -15,9 +15,15 @@ body {
   min-height: 100vh;
 }
 
+#game-information {
+  display: flex;
+  justify-content: space-between;
+  padding: 2rem;
+}
+
 .paper {
   background-color: $backgroundColor !important;
-  margin-top: 30%;
+  margin-top: 10%;
 
   .title {
     font-size: 4rem;
@@ -27,6 +33,7 @@ body {
   .menu {
     display: flex;
     flex-direction: column;
+    margin-top: 2rem;
     padding: 1rem;
 
     button {

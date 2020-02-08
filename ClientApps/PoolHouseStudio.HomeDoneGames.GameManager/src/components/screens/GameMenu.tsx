@@ -11,9 +11,10 @@ interface MatchParams {
 
 interface GameMenuProps extends RouteComponentProps<MatchParams> {
   gameTypes: GameType[];
+  history: any;
 }
 
-const GameMenu: React.FC<GameMenuProps> = ({ gameTypes, match }) => {
+const GameMenu: React.FC<GameMenuProps> = ({ gameTypes, history, match }) => {
   const gameTypeID: number = parseInt(match.params.gameTypeID);
   const selectedGameType: GameType | undefined = gameTypes.find(
     (gameType: GameType) => {
@@ -22,8 +23,7 @@ const GameMenu: React.FC<GameMenuProps> = ({ gameTypes, match }) => {
   );
 
   const selectMenuOption = (gameTypeID: number | undefined) => {
-    // <Link to={`/play/${selectedGameType?.gameTypeID}/lobby`}>
-    //             </Link>
+    history.push(`/play/${gameTypeID}/lobby`);
   };
 
   return (

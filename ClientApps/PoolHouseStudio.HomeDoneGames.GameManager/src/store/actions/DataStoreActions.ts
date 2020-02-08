@@ -7,13 +7,25 @@ export const getGameTypes = () => async (dispatch: any, getState: any) => {
   // TODO: prevent game types from reloading
 
   const response = await GameTypeService.getGameTypes();
-  const payload = {
-    gameTypes: response
-  };
+  if (response === null) {
+    dispatch({
+      type: ActionType.Error,
+      payload: {
+        error: {
+          title: "Connection Error",
+          message: "Unable to connect to game server. Please try again later!"
+        }
+      }
+    });
+  } else {
+    const payload = {
+      gameTypes: response
+    };
 
-  dispatch({
-    type: ActionType.FetchGameTypes,
-    payload
-  });
-  dispatch({ type: ActionType.Success });
+    dispatch({
+      type: ActionType.FetchGameTypes,
+      payload
+    });
+    dispatch({ type: ActionType.Success });
+  }
 };

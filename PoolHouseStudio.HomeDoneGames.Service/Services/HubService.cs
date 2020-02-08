@@ -12,7 +12,8 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
     public interface IHubService
     {
         HubResponse DisconnectPlayer( string connectionId);
-        HubResponse CreateGame( string connectionId, CreateRoomResponse createRoomResponse );
+        Task<HubResponse> CreateGame( string connectionId, int roomID );
+        GameManager GetGameManager(string roomCode);
         IList<Player> GetPlayers( string roomCode );
         Task<HubResponse> JoinRoom( string connectionId, JoinRoomRequest joinRoomRequest );
     }
@@ -22,7 +23,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
         // connection id
         private static Dictionary<string, Player> _players = new Dictionary<string, Player>();
 
-        // connection id
+        // room code
         private static Dictionary<string, GameManager> _managers = new Dictionary<string, GameManager>();
 
         // room code
@@ -59,20 +60,22 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             };
         }
 
-        public HubResponse CreateGame( string connectionId, CreateRoomResponse createRoomResponse )
+        public async Task<HubResponse> CreateGame( string connectionId, int roomID )
         {
-            var guid = new Guid();
-            var name = $"GameManager_{guid}";
+            var room = await _roomRepository.GetById( roomID );
+
+            var guid = Guid.NewGuid();
+            var groupName = $"GameManager_{guid}";
 
             var gameManager = new GameManager
             {
                 ConnnectionId = connectionId,
-                Name = name
+                GroupName = groupName
             };
 
             if ( _managers.FirstOrDefault(e => e.Key == connectionId).Value == null )
             {
-                _managers.Add( connectionId, gameManager );
+                _managers.Add( room.RoomCode, gameManager );
             } 
             else
             {
@@ -81,14 +84,14 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
 
             var game = new Game
             {
-                GameTypeID = createRoomResponse.GameTypeID,
-                RoomCode = createRoomResponse.RoomCode,
+                GameTypeID = room.GameTypeID,
+                RoomCode = room.RoomCode,
                 GameManager = gameManager
             };
 
-            if ( _games.FirstOrDefault( e => e.Key == createRoomResponse.RoomCode ).Value == null )
+            if ( _games.FirstOrDefault( e => e.Key == room.RoomCode ).Value == null )
             {
-                _games.Add( createRoomResponse.RoomCode, game );
+                _games.Add( room.RoomCode, game );
             }
             else
             {
@@ -99,16 +102,19 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             {
                 Data = new CreateGameResponse
                 {
-                    GameManager = gameManager,
-                    GameName = createRoomResponse.GameName,
-                    GameTypeID = createRoomResponse.GameTypeID,
-                    RoomCode = createRoomResponse.RoomCode
+                    ManagerGroupName = gameManager.GroupName,
+                    GameTypeID = room.GameTypeID,
+                    RoomCode = room.RoomCode
                 },
                 Message = "Room was created!",
                 Method = "GenerateRoomCode"
             };
         }
 
+        public GameManager GetGameManager( string roomCode )
+        {
+            return _managers.FirstOrDefault( e => e.Key == roomCode ).Value; 
+        }
 
         public IList<Player> GetPlayers( string roomCode )
         {
@@ -177,5 +183,6 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             }
             return game;
         }
+
     }
 }

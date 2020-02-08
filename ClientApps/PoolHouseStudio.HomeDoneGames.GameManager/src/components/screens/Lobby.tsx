@@ -2,6 +2,7 @@ import { Grid, Paper } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import React, { useEffect } from "react";
 import { connect } from "react-redux";
+import { IGameData } from "../../models/GameData";
 import GameType from "../../models/GameType";
 import { connectToHub, generateRoomCode } from "../../store/actions/HubActions";
 import { RootState } from "../../store/reducers/RootReducer";
@@ -11,48 +12,51 @@ interface ILobbyProps {
   connectToHub: () => any;
   generateRoomCode: (gameTypeID: number) => any;
   error: any;
+  game: IGameData | null;
   loading: boolean;
   selectedGame: GameType | null;
 }
-// TODO:
-// If no room and loading then show "Generating ROom Code..."
-// If room and not loading show "WAiting for Players..."
+
 const Lobby: React.FC<ILobbyProps> = ({
   connectToHub,
   generateRoomCode,
   error,
+  game,
   loading,
   selectedGame
 }) => {
   useEffect(() => {
-    // TODO: send request to get room code
-    doStuff();
+    createGame();
   }, []);
 
-  const doStuff = async () => {
+  const createGame = async () => {
     await connectToHub();
     if (!error) {
       await generateRoomCode(selectedGame?.gameTypeID!);
-
-      // TODO: what to do in case of error? redirect somewhere?
     }
   };
 
   return (
     <>
-      <Grid container alignItems="center" justify="center" spacing={0}>
-        <Grid item xs={12} sm={6}>
-          <Paper elevation={0} className="paper">
-            {loading ? (
-              <SimpleLoader text="Generating Room Code..." />
-            ) : (
-              <>
-                <Typography variant="h2" align="center">
+      <Grid container>
+        <Grid item xs={12}>
+          {loading ? (
+            <SimpleLoader text="Generating Room Code..." />
+          ) : (
+            <>
+              <div id="game-information">
+                <Typography variant="h4">
+                  Room Code: {game?.roomCode}
+                </Typography>
+                <Typography variant="h4">{game?.gameName}</Typography>
+              </div>
+              <Paper elevation={0} className="paper">
+                <Typography variant="h1" align="center">
                   Waiting for Players...
                 </Typography>
-              </>
-            )}
-          </Paper>
+              </Paper>
+            </>
+          )}
         </Grid>
       </Grid>
     </>
@@ -62,6 +66,7 @@ const Lobby: React.FC<ILobbyProps> = ({
 const mapStateToProps = (state: RootState) => {
   return {
     error: state.global.error,
+    game: state.hub.game,
     loading: state.global.loading,
     selectedGame: state.gameState.selectedGame
   };

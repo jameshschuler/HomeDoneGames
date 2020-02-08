@@ -8,11 +8,13 @@ import {
   Route,
   Switch
 } from "react-router-dom";
+import CustomAlert from "./components/CustomAlert";
 import Navbar from "./components/Navbar";
 import About from "./components/screens/About";
 import GameMenu from "./components/screens/GameMenu";
 import Lobby from "./components/screens/Lobby";
 import SelectGame from "./components/screens/SelectGame";
+import { AlertType } from "./models/enums/AlertType";
 import { IError } from "./models/Error";
 import GameType from "./models/GameType";
 import { RootState } from "./store/reducers/RootReducer";
@@ -35,6 +37,10 @@ const App: React.FC<IAppProps> = ({ error, loading, selectedGame }) => {
       <div id="container">
         <Router>
           <Navbar />
+
+          {error && (
+            <CustomAlert type={AlertType.Error} message={error.message} />
+          )}
           <Switch>
             <>
               <Route exact path="/play" component={SelectGame}></Route>

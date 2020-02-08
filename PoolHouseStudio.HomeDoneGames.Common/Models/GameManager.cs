@@ -3,6 +3,6 @@
     public class GameManager
     {
         public string ConnnectionId { get; set; }
-        public string Name { get; set; }
+        public string GroupName { get; set; }
     }
 }

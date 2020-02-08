@@ -54,8 +54,8 @@ export const signalRMiddleware = (store: any) => (next: any) => async (
 
       // Register handlers
       if (connection) {
-        connection.on("SendSuccessResponseToCaller", handleSuccessResponse);
-        connection.on("SendErrorResponseToCaller", handleErrorResponse);
+        connection.on("SendSuccessResponse", handleSuccessResponse);
+        connection.on("SendErrorResponse", handleErrorResponse);
         // TODO: handle connection disconnect and reconnect
         // https://docs.microsoft.com/en-us/aspnet/core/signalr/javascript-client?view=aspnetcore-3.1#reconnect-clients
         connection.on("disconnected", handlePlayerDisconnected);

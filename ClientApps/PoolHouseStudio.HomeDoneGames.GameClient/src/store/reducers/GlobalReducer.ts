@@ -23,7 +23,7 @@ const globalReducer = (state: IGlobalState = initialState, action: IAction) => {
       return {
         ...state,
         loading: false,
-        error: undefined
+        error: null
       };
     case ActionType.Error:
       return {
