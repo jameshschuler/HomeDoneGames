@@ -24,7 +24,6 @@ export const signalRMiddleware = (store: any) => (next: any) => async (
         break;
       case HubMethods.PlayersUpdated:
         const { players } = response.data as IPlayersUpdatedResponse;
-        console.log(players);
         dispatch({
           type: ActionType.PlayersUpdated,
           payload: {

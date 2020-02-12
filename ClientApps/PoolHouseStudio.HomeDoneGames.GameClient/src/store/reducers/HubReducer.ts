@@ -4,12 +4,12 @@ import { IGameData } from "../../models/GameData";
 import { IPlayer } from "../../models/Player";
 
 export interface IHubState {
-  gameData: IGameData | null;
+  gameData: IGameData | undefined;
   players: IPlayer[];
 }
 
 const initialState: IHubState = {
-  gameData: null,
+  gameData: undefined,
   players: []
 };
 

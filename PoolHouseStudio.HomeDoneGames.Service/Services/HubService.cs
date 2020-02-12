@@ -11,9 +11,9 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
 {
     public interface IHubService
     {
-        HubResponse DisconnectPlayer( string connectionId);
+        HubResponse DisconnectPlayer( string connectionId );
         Task<HubResponse> CreateGame( string connectionId, int roomID );
-        GameManager GetGameManager(string roomCode);
+        GameManager GetGameManager( string roomCode );
         IList<Player> GetPlayers( string roomCode );
         Task<HubResponse> JoinRoom( string connectionId, JoinRoomRequest joinRoomRequest );
     }
@@ -39,7 +39,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
         public HubResponse DisconnectPlayer( string connectionId )
         {
             var player = _players.FirstOrDefault( e => e.Key == connectionId ).Value;
-            if (player == null)
+            if ( player == null )
             {
                 return null;
             }
@@ -49,6 +49,11 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
 
             game.Players.Remove( connectionId );
             _players.Remove( connectionId );
+
+            if ( game.Players.Any() )
+            {
+                game.Players.First().Value.IsFirstPlayer = true;
+            }
 
             return new HubSuccessResponse
             {
@@ -73,10 +78,10 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
                 GroupName = groupName
             };
 
-            if ( _managers.FirstOrDefault(e => e.Key == connectionId).Value == null )
+            if ( _managers.FirstOrDefault( e => e.Key == connectionId ).Value == null )
             {
                 _managers.Add( room.RoomCode, gameManager );
-            } 
+            }
             else
             {
                 return new HubErrorResponse { Message = "Game Manager already exists!", Method = "GenerateRoomCode" };
@@ -113,7 +118,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
 
         public GameManager GetGameManager( string roomCode )
         {
-            return _managers.FirstOrDefault( e => e.Key == roomCode ).Value; 
+            return _managers.FirstOrDefault( e => e.Key == roomCode ).Value;
         }
 
         public IList<Player> GetPlayers( string roomCode )
@@ -138,7 +143,8 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             {
                 Name = joinRoomRequest.Name,
                 RoomCode = joinRoomRequest.RoomCode,
-                GroupName = groupName
+                GroupName = groupName,
+                IsFirstPlayer = game.Players.Count() == 0
             };
 
             if ( game.Players.Count < room.GameType.MaxPlayers )
@@ -164,7 +170,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
                     Description = room.GameType.Description,
                     GameName = room.GameType.GameName,
                     GroupName = groupName,
-                    Player = player,
+                    Me = player,
                     MinPlayers = room.GameType.MinPlayers,
                     RoomCode = room.RoomCode
                 },
@@ -173,7 +179,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             };
         }
 
-        private Game GetGame(string roomCode)
+        private Game GetGame( string roomCode )
         {
             var game = _games.FirstOrDefault( e => e.Key == roomCode ).Value;
             if ( game == null )

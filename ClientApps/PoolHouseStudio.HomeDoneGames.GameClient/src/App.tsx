@@ -23,7 +23,7 @@ const theme = createMuiTheme({
 
 interface IAppProps {
   connectToHub: () => Promise<void>;
-  error: IError | null;
+  error: IError | undefined;
   loading: boolean;
 }
 

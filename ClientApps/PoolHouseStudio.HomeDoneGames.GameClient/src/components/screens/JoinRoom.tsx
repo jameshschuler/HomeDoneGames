@@ -1,10 +1,9 @@
 import { Button, Grid, Paper, TextField } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { IError } from "../../models/Error";
 import { IJoinRoomRequest } from "../../models/JoinRoomRequest";
-import { IPlayer } from "../../models/Player";
 import { joinRoom } from "../../store/actions/HubActions";
 import { IRootState } from "../../store/reducers/RootReducer";
 
@@ -14,28 +13,16 @@ interface IJoinRoomState {
 }
 
 interface IJoinRoomProps {
-  error: IError | null;
+  error: IError | undefined;
   joinRoom: (request: IJoinRoomRequest) => Promise<void>;
   history: any;
-  me: IPlayer | undefined;
 }
 
-const JoinRoom: React.FC<IJoinRoomProps> = ({
-  error,
-  joinRoom,
-  history,
-  me
-}) => {
+const JoinRoom: React.FC<IJoinRoomProps> = ({ error, joinRoom, history }) => {
   const [values, setValues] = useState<IJoinRoomState>({
     roomCode: "",
     playerName: ""
   });
-
-  useEffect(() => {
-    if (me) {
-      history.push("/lobby");
-    }
-  }, [me]);
 
   const handleChange = (prop: keyof IJoinRoomState) => (
     event: React.ChangeEvent<HTMLInputElement>
@@ -54,7 +41,7 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({
   };
 
   return (
-    <Grid item xs={12} sm={8} alignContent={"center"} id="join-room">
+    <Grid item xs={12} sm={8} id="join-room">
       <Paper className="paper" elevation={0}>
         <Typography variant="h6">
           Enter a room code and name to get started!
@@ -99,7 +86,6 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({
 
 const mapStateToProps = (state: IRootState) => {
   return {
-    me: state.hub.gameData?.player,
     error: state.global.error
   };
 };

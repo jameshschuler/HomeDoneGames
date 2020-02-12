@@ -5,6 +5,6 @@ export interface IGameData {
   gameName: string;
   gameTypeID: string;
   minPlayers: number;
-  player: IPlayer;
+  me: IPlayer;
   roomCode: string;
 }

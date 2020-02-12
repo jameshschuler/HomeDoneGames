@@ -7,14 +7,14 @@ import { IRootState } from "../../store/reducers/RootReducer";
 
 interface ILobbyProps {
   history: any;
-  minPlayers: number | undefined;
   players: IPlayer[];
+  isFirstPlayer: boolean | undefined;
 }
 
-const Lobby: React.FC<ILobbyProps> = ({ history, minPlayers, players }) => {
+const Lobby: React.FC<ILobbyProps> = ({ history, isFirstPlayer, players }) => {
   useEffect(() => {
     if (players.length === 0) {
-      history.push("/join");
+      // history.push("/join");
     }
   }, []);
 
@@ -32,7 +32,7 @@ const Lobby: React.FC<ILobbyProps> = ({ history, minPlayers, players }) => {
               );
             })}
         </div>
-        {players.length >= minPlayers! && (
+        {isFirstPlayer && (
           <div id="actions">
             <Button
               id="start-game-button"
@@ -51,7 +51,7 @@ const Lobby: React.FC<ILobbyProps> = ({ history, minPlayers, players }) => {
 
 const mapStateToProps = (state: IRootState) => {
   return {
-    minPlayers: state.hub.gameData?.minPlayers,
+    isFirstPlayer: state.hub.gameData?.me.isFirstPlayer,
     players: state.hub.players
   };
 };

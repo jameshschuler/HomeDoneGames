@@ -4,11 +4,11 @@ import { IError } from "../../models/Error";
 
 export interface IGlobalState {
   loading: boolean;
-  error: IError | null;
+  error: IError | undefined;
 }
 
 const initialState: IGlobalState = {
-  error: null,
+  error: undefined,
   loading: false
 };
 
