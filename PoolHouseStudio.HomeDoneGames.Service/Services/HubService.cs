@@ -16,6 +16,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
         GameManager GetGameManager( string roomCode );
         IList<Player> GetPlayers( string roomCode );
         Task<HubResponse> JoinRoom( string connectionId, JoinRoomRequest joinRoomRequest );
+        Task<HubResponse> StartGame( string roomCode );
     }
 
     public class HubService : IHubService
@@ -178,6 +179,40 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
                 Method = "JoinRoomAsClient"
             };
         }
+
+        public async Task<HubResponse> StartGame( string roomCode )
+        {
+            var game = GetGame( roomCode );
+
+            var includeProperties = string.Join( ",", "GameType" );
+            var room = await _roomRepository.FirstOrDefault( e => e.RoomCode == roomCode, includeProperties );
+            
+            if ( game.Players.Count() < room.GameType.MinPlayers )
+            {
+                return new HubErrorResponse { Message = $"{room.GameType.GameName} needs at least ${room.GameType.MinPlayers} players to start.", Method = "StartGame" };
+            }
+
+            var didStartGame = game.StartGame();
+
+            if(!didStartGame)
+            {
+                return new HubErrorResponse { Message = $"Game was already started!", Method = "StartGame" };
+            }
+
+            return new HubSuccessResponse
+            {
+                Data = new StartGameResponse
+                {
+                   CurrentTurn = game.CurrentTurn,
+                   IsStarted = game.IsStarted,
+                   RoundNumber = game.RoundNumber,
+                   TurnOrder = game.TurnOrder,
+                },
+                Message = "Started Game!",
+                Method = "StartGame"
+            };
+        }
+
 
         private Game GetGame( string roomCode )
         {

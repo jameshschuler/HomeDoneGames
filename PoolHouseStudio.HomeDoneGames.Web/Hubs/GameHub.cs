@@ -116,32 +116,48 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
             } );
         }
 
-        public async Task SendSuccessResponseToCaller( HubSuccessResponse hubSuccessResponse )
+        public async Task StartGame( StartGameRequest startGameRequest )
+        {
+            var response = await _hubService.StartGame( startGameRequest.RoomCode );
+
+            if ( response.GetType() == typeof( HubErrorResponse ) )
+            {
+                await SendErrorResponseToCaller( (HubErrorResponse) response );
+                return;
+            }
+
+            var successResponse = (HubSuccessResponse) response;
+            var data = (StartGameResponse) successResponse.Data;
+
+            // TODO: update everyone!
+        }
+
+        #region Private Methods
+
+        private async Task SendSuccessResponseToCaller( HubSuccessResponse hubSuccessResponse )
         {
             await Clients.Caller.SendAsync( "SendSuccessResponse", hubSuccessResponse );
         }
 
-        public async Task SendErrorResponseToCaller( HubErrorResponse hubErrorResponse )
+        private async Task SendErrorResponseToCaller( HubErrorResponse hubErrorResponse )
         {
             await Clients.Caller.SendAsync( "SendErrorResponse", hubErrorResponse );
         }
 
-        public async Task SendSuccessResponseToGroup( string groupName, HubSuccessResponse hubSuccessResponse )
+        private async Task SendSuccessResponseToGroup( string groupName, HubSuccessResponse hubSuccessResponse )
         {
             await Clients.Group( groupName ).SendAsync( "SendSuccessResponse", hubSuccessResponse );
         }
 
-        public async Task SendErrorResponseToGroup( string groupName, HubErrorResponse hubErrorResponse )
+        private async Task SendErrorResponseToGroup( string groupName, HubErrorResponse hubErrorResponse )
         {
             await Clients.Group( groupName ).SendAsync( "SendErrorResponse", hubErrorResponse );
         }
 
-        public async Task SendSuccessResponseToGameManager( string connectionId, HubSuccessResponse hubSuccessResponse )
+        private async Task SendSuccessResponseToGameManager( string connectionId, HubSuccessResponse hubSuccessResponse )
         {
             await Clients.Client( connectionId ).SendAsync( "SendSuccessResponse", hubSuccessResponse );
         }
-
-        #region Private Methods
 
         private async Task<HubErrorResponse> ValidateJoinRoomRequest( JoinRoomRequest request )
         {
