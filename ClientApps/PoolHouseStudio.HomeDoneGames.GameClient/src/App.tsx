@@ -6,12 +6,14 @@ import { connect } from "react-redux";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
 import CustomAlert from "./components/CustomAlert";
 import Navbar from "./components/Navbar";
+import CreateRoom from "./components/screens/CreateRoom";
 import JoinRoom from "./components/screens/JoinRoom";
 import Lobby from "./components/screens/Lobby";
 import Play from "./components/screens/Play";
+import SelectGame from "./components/screens/SelectGame";
 import SimpleLoader from "./components/SimpleLoader";
 import { AlertType } from "./models/enums/AlertType";
-import { IError } from "./models/Error";
+import { Error } from "./models/Error";
 import { connectToHub } from "./store/actions/HubActions";
 import { IRootState } from "./store/reducers/RootReducer";
 
@@ -23,7 +25,7 @@ const theme = createMuiTheme({
 
 interface IAppProps {
   connectToHub: () => Promise<void>;
-  error: IError | undefined;
+  error: Error | undefined;
   loading: boolean;
 }
 
@@ -45,7 +47,9 @@ const App: React.FC<IAppProps> = ({ error, loading, connectToHub }) => {
           ) : (
             <Switch>
               <Route exact path="/" component={JoinRoom} />
-              <Route exact path="/join" component={JoinRoom} />
+              <Route exact path="/join-room" component={JoinRoom} />
+              <Route exact path="/select-game" component={SelectGame} />
+              <Route exact path="/create-room" component={CreateRoom} />
               <Route exact path="/lobby" component={Lobby} />
               <Route exact path="/play" component={Play} />
             </Switch>

@@ -44,16 +44,14 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
             await base.OnDisconnectedAsync( exception );
         }
 
-        // TODO: verify connection is a valid game manager client app 
-        // TODO: move into hub service
-        // [Authorize]
-        public async Task GenerateRoomCode( int gameTypeID )
+        // TODO? [Authorize]
+        public async Task CreateRoom( CreateRoomRequest request )
         {
             try
             {
-                var roomID = await _roomService.CreateRoom( gameTypeID );
+                var room = await _roomService.CreateRoom( request.GameTypeID );
 
-                var response = await _hubService.CreateGame( Context.ConnectionId, roomID );
+                var response = _hubService.CreateGame( Context.ConnectionId, room, request );
 
                 if ( response.GetType() == typeof( HubErrorResponse ) )
                 {
@@ -62,9 +60,9 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
                 }
 
                 var successResponse = (HubSuccessResponse) response;
-                var data = (CreateGameResponse) successResponse.Data;
+                var data = (CreateRoomResponse) successResponse.Data;
+                await Groups.AddToGroupAsync( Context.ConnectionId, data.Player.GroupName );
                 
-                await Groups.AddToGroupAsync( Context.ConnectionId, data.ManagerGroupName );
                 await SendSuccessResponseToCaller( successResponse );
             }
             catch ( Exception ex )
@@ -72,7 +70,7 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
                 await SendErrorResponseToCaller( new HubErrorResponse
                 {
                     Message = ex.Message,
-                    Method = "GenerateRoomCode"
+                    Method = "CreateRoom"
                 } );
             }
         }
@@ -118,18 +116,35 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
 
         public async Task StartGame( StartGameRequest startGameRequest )
         {
-            var response = await _hubService.StartGame( startGameRequest.RoomCode );
-
-            if ( response.GetType() == typeof( HubErrorResponse ) )
+            try
             {
-                await SendErrorResponseToCaller( (HubErrorResponse) response );
-                return;
+                var response = await _hubService.StartGame( startGameRequest.RoomCode );
+
+                if ( response.GetType() == typeof( HubErrorResponse ) )
+                {
+                    await SendErrorResponseToCaller( (HubErrorResponse) response );
+                    return;
+                }
+
+                var successResponse = (HubSuccessResponse) response;
+                var data = (StartGameResponse) successResponse.Data;
+
+                await SendSuccessResponseToCaller( successResponse );
+                await SendSuccessResponseToGroup( data.GroupName, new HubSuccessResponse
+                {
+                    Data = data,
+                    Method = "GameStarted",
+                    Message = "The game has started!"
+                } );
             }
-
-            var successResponse = (HubSuccessResponse) response;
-            var data = (StartGameResponse) successResponse.Data;
-
-            // TODO: update everyone!
+            catch ( Exception ex )
+            {
+                await SendErrorResponseToCaller( new HubErrorResponse
+                {
+                    Message = ex.Message,
+                    Method = "StartGame"
+                } );
+            }
         }
 
         #region Private Methods

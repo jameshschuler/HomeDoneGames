@@ -2,10 +2,9 @@
 
 namespace PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response
 {
-    public class CreateGameResponse
+    public class CreateRoomResponse
     {
-        public int GameTypeID { get; set; }
-        public string ManagerGroupName { get; set; }
         public string RoomCode { get; set; }
+        public Player Player { get; set; }
     }
 }

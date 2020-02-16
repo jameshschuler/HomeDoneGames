@@ -1,6 +1,8 @@
 import { HubConnection, HubConnectionBuilder } from "@microsoft/signalr";
 import HubMethods from "../models/HubMethods";
-import { IJoinRoomRequest } from "../models/JoinRoomRequest";
+import { CreateRoomRequest } from "../models/request/CreateRoomRequest";
+import { JoinRoomRequest } from "../models/request/JoinRoomRequest";
+import { StartGameRequest } from "../models/request/StartGameRequest";
 
 const baseUrl =
   process.env.NODE_ENV === "development"
@@ -30,7 +32,17 @@ const getConnection = () => {
   return connection;
 };
 
-const joinRoom = async (request: IJoinRoomRequest) => {
+const createRoom = async (request: CreateRoomRequest) => {
+  try {
+    console.log(request);
+
+    await connection.invoke(HubMethods.CreateRoom, request);
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const joinRoom = async (request: JoinRoomRequest) => {
   try {
     await connection.invoke(HubMethods.JoinRoomAsClient, request);
   } catch (err) {
@@ -38,8 +50,18 @@ const joinRoom = async (request: IJoinRoomRequest) => {
   }
 };
 
+const startGame = async (request: StartGameRequest) => {
+  try {
+    await connection.invoke(HubMethods.StartGame, request);
+  } catch (err) {
+    console.log({ ...err });
+  }
+};
+
 export default {
+  createRoom,
   connectToHub,
   getConnection,
-  joinRoom
+  joinRoom,
+  startGame
 };

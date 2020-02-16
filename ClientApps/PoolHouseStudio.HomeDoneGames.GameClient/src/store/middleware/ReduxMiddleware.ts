@@ -12,13 +12,14 @@ export const signalRMiddleware = (store: any) => (next: any) => async (
   const handleSuccessResponse = (response: IHubResponse) => {
     dispatch({ type: ActionType.Success });
 
-    console.log(response);
+    console.log(response.method, ":", response);
     switch (response.method) {
       case HubMethods.JoinRoomAsClient:
         dispatch({
           type: ActionType.JoinRoom,
           payload: {
-            gameData: response.data
+            player: response.data.player,
+            roomCode: response.data.roomCode
           }
         });
         break;
@@ -30,6 +31,26 @@ export const signalRMiddleware = (store: any) => (next: any) => async (
             players
           }
         });
+        break;
+      case HubMethods.CreateRoom:
+        dispatch({
+          type: ActionType.RoomCreated,
+          payload: {
+            player: response.data.player,
+            roomCode: response.data.roomCode
+          }
+        });
+        break;
+      case HubMethods.StartGame:
+        dispatch({
+          type: ActionType.GameStarted,
+          payload: {
+            gameData: response.data
+          }
+        });
+        break;
+      case HubMethods.GameStarted:
+        console.log("GameStarted");
         break;
     }
   };

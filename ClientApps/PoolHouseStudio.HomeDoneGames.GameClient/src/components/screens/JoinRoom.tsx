@@ -2,8 +2,9 @@ import { Button, Grid, Paper, TextField } from "@material-ui/core";
 import Typography from "@material-ui/core/Typography";
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { IError } from "../../models/Error";
-import { IJoinRoomRequest } from "../../models/JoinRoomRequest";
+import { Link } from "react-router-dom";
+import { Error } from "../../models/Error";
+import { JoinRoomRequest } from "../../models/request/JoinRoomRequest";
 import { joinRoom } from "../../store/actions/HubActions";
 import { IRootState } from "../../store/reducers/RootReducer";
 
@@ -13,8 +14,8 @@ interface IJoinRoomState {
 }
 
 interface IJoinRoomProps {
-  error: IError | undefined;
-  joinRoom: (request: IJoinRoomRequest) => Promise<void>;
+  error: Error | undefined;
+  joinRoom: (request: JoinRoomRequest) => Promise<void>;
   history: any;
 }
 
@@ -38,6 +39,9 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({ error, joinRoom, history }) => {
       name: values.playerName,
       roomCode: values.roomCode.toUpperCase()
     });
+    if (!error) {
+      history.push("/lobby");
+    }
   };
 
   return (
@@ -76,9 +80,11 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({ error, joinRoom, history }) => {
             color="primary"
             type="submit"
           >
-            Join!
+            Join Room
           </Button>
         </form>
+
+        <Link to="/select-game">Create Room</Link>
       </Paper>
     </Grid>
   );

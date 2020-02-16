@@ -1,5 +1,6 @@
 import { ActionType } from "../../models/enums/ActionType";
-import { IJoinRoomRequest } from "../../models/JoinRoomRequest";
+import { JoinRoomRequest } from "../../models/request/JoinRoomRequest";
+import { StartGameRequest } from "../../models/request/StartGameRequest";
 import HubService from "../../services/HubService";
 
 export const connectToHub = () => async (dispatch: any, getState: any) => {
@@ -22,10 +23,28 @@ export const connectToHub = () => async (dispatch: any, getState: any) => {
   }
 };
 
-export const joinRoom = (request: IJoinRoomRequest) => async (
+export const createRoom = (playerName: string) => async (
+  dispatch: any,
+  getState: any
+) => {
+  dispatch({ type: ActionType.Loading });
+
+  // TODO: get gametypeid from store
+  await HubService.createRoom({ gameTypeID: 1, playerName });
+};
+
+export const joinRoom = (request: JoinRoomRequest) => async (
   dispatch: any,
   getState: any
 ) => {
   dispatch({ type: ActionType.Loading });
   await HubService.joinRoom(request);
+};
+
+export const startGame = (roomCode: string) => async (
+  dispatch: any,
+  getState: any
+) => {
+  dispatch({ type: ActionType.Loading });
+  await HubService.startGame(new StartGameRequest(roomCode));
 };

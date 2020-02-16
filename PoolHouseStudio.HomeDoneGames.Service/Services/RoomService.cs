@@ -10,7 +10,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
 {
     public interface IRoomService
     {
-        Task<int> CreateRoom(int gameTypeID);
+        Task<Room> CreateRoom(int gameTypeID);
         Task<Room> GetRoom( string roomCode );
         Task<ValidateRoomResponse> ValidateRoom(string roomCode);
     }
@@ -27,7 +27,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             _roomRepository = roomRepository;
         }
 
-        public async Task<int> CreateRoom(int gameTypeID)
+        public async Task<Room> CreateRoom(int gameTypeID)
         {
             var gameType = await _gameTypeRepository.GetById(gameTypeID);
             if (gameType == null)
@@ -52,7 +52,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
 
             await _roomRepository.Add(room);
 
-            return room.RoomID;
+            return room;
         }
 
         public async Task<Room> GetRoom( string roomCode )

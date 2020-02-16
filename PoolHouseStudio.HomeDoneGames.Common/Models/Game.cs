@@ -14,7 +14,7 @@ namespace PoolHouseStudio.HomeDoneGames.Common.Models
         }
 
         public Player CurrentTurn { get; private set; }
-        public GameManager GameManager { get; set; }
+        public string GroupName { get; set; }
         public int GameTypeID { get; set; }
         public bool IsStarted { get; private set; }
         public Dictionary<string, Player> Players { get; set; }

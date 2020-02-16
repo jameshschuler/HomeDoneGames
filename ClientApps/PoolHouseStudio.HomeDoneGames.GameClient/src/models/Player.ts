@@ -1,4 +1,4 @@
-export interface IPlayer {
+export interface Player {
   groupName: string;
   name: string;
   roomCode: string;

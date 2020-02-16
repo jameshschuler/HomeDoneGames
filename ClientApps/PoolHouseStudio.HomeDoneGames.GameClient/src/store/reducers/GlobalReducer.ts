@@ -1,10 +1,10 @@
 import { IAction } from "../../models/Action";
 import { ActionType } from "../../models/enums/ActionType";
-import { IError } from "../../models/Error";
+import { Error } from "../../models/Error";
 
 export interface IGlobalState {
   loading: boolean;
-  error: IError | undefined;
+  error: Error | undefined;
 }
 
 const initialState: IGlobalState = {
@@ -23,7 +23,7 @@ const globalReducer = (state: IGlobalState = initialState, action: IAction) => {
       return {
         ...state,
         loading: false,
-        error: null
+        error: undefined
       };
     case ActionType.Error:
       return {

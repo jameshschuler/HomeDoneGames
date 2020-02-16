@@ -1,6 +1,7 @@
 ﻿using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Request;
 using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response;
 using PoolHouseStudio.HomeDoneGames.Common.Models;
+using PoolHouseStudio.HomeDoneGames.DataAccessLayer.Entities;
 using PoolHouseStudio.HomeDoneGames.DataAccessLayer.Repositories;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
     public interface IHubService
     {
         HubResponse DisconnectPlayer( string connectionId );
-        Task<HubResponse> CreateGame( string connectionId, int roomID );
+        HubResponse CreateGame( string connectionId, Room  room, CreateRoomRequest request );
         GameManager GetGameManager( string roomCode );
         IList<Player> GetPlayers( string roomCode );
         Task<HubResponse> JoinRoom( string connectionId, JoinRoomRequest joinRoomRequest );
@@ -37,6 +38,47 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             _roomRepository = roomRepository;
         }
 
+        public HubResponse CreateGame( string connectionId, Room room, CreateRoomRequest request )
+        {
+            if ( _games.FirstOrDefault( e => e.Key == room.RoomCode ).Value != null )
+            {
+                return new HubErrorResponse { Message = "Game already exists!", Method = "CreateRoom" };
+            }
+
+            var game = new Game
+            {
+                GameTypeID = room.GameTypeID,
+                RoomCode = room.RoomCode,
+                GroupName = $"GameClient_{room.RoomCode}"
+            };
+
+            _games.Add( room.RoomCode, game );
+
+            var player = new Player
+            {
+                GroupName = game.GroupName,
+                IsFirstPlayer = true,
+                Lives = 3, // TODO: this value will come from the GameType object
+                Name = request.PlayerName,
+                RoomCode = room.RoomCode,
+                Score = 0,
+            };
+
+            game.Players.Add( connectionId, player );
+            _players.Add( connectionId, player );
+
+            return new HubSuccessResponse
+            {
+                Data = new CreateRoomResponse
+                {
+                    Player = player,
+                    RoomCode = room.RoomCode,
+                },
+                Message = "Room was created!",
+                Method = "CreateRoom"
+            };
+        }
+
         public HubResponse DisconnectPlayer( string connectionId )
         {
             var player = _players.FirstOrDefault( e => e.Key == connectionId ).Value;
@@ -55,6 +97,11 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             {
                 game.Players.First().Value.IsFirstPlayer = true;
             }
+            else
+            {
+                // If no players, just clean up the games list (by removing game)
+                _games.Remove( roomCode );
+            }
 
             return new HubSuccessResponse
             {
@@ -66,57 +113,6 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             };
         }
 
-        public async Task<HubResponse> CreateGame( string connectionId, int roomID )
-        {
-            var room = await _roomRepository.GetById( roomID );
-
-            var guid = Guid.NewGuid();
-            var groupName = $"GameManager_{guid}";
-
-            var gameManager = new GameManager
-            {
-                ConnnectionId = connectionId,
-                GroupName = groupName
-            };
-
-            if ( _managers.FirstOrDefault( e => e.Key == connectionId ).Value == null )
-            {
-                _managers.Add( room.RoomCode, gameManager );
-            }
-            else
-            {
-                return new HubErrorResponse { Message = "Game Manager already exists!", Method = "GenerateRoomCode" };
-            }
-
-            var game = new Game
-            {
-                GameTypeID = room.GameTypeID,
-                RoomCode = room.RoomCode,
-                GameManager = gameManager
-            };
-
-            if ( _games.FirstOrDefault( e => e.Key == room.RoomCode ).Value == null )
-            {
-                _games.Add( room.RoomCode, game );
-            }
-            else
-            {
-                return new HubErrorResponse { Message = "Game already exists!", Method = "GenerateRoomCode" };
-            }
-
-            return new HubSuccessResponse
-            {
-                Data = new CreateGameResponse
-                {
-                    ManagerGroupName = gameManager.GroupName,
-                    GameTypeID = room.GameTypeID,
-                    RoomCode = room.RoomCode
-                },
-                Message = "Room was created!",
-                Method = "GenerateRoomCode"
-            };
-        }
-
         public GameManager GetGameManager( string roomCode )
         {
             return _managers.FirstOrDefault( e => e.Key == roomCode ).Value;
@@ -124,7 +120,8 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
 
         public IList<Player> GetPlayers( string roomCode )
         {
-            var players = GetGame( roomCode ).Players.Values.ToList();
+            var game = _games.FirstOrDefault( e => e.Key == roomCode ).Value;
+            var players = game.Players.Values.ToList();
             return players;
         }
 
@@ -138,13 +135,13 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             var includeProperties = string.Join( ",", "GameType" );
             var room = await _roomRepository.FirstOrDefault( e => e.RoomCode == joinRoomRequest.RoomCode, includeProperties );
 
-            var game = GetGame( joinRoomRequest.RoomCode );
-            var groupName = $"ClientGroup_{joinRoomRequest.RoomCode}";
+            var game = _games.FirstOrDefault( e => e.Key == room.RoomCode ).Value;
+
             var player = new Player
             {
                 Name = joinRoomRequest.Name,
                 RoomCode = joinRoomRequest.RoomCode,
-                GroupName = groupName,
+                GroupName = game.GroupName,
                 IsFirstPlayer = game.Players.Count() == 0
             };
 
@@ -170,8 +167,8 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
                 {
                     Description = room.GameType.Description,
                     GameName = room.GameType.GameName,
-                    GroupName = groupName,
-                    Me = player,
+                    GroupName = game.GroupName,
+                    Player = player,
                     MinPlayers = room.GameType.MinPlayers,
                     RoomCode = room.RoomCode
                 },
@@ -182,14 +179,14 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
 
         public async Task<HubResponse> StartGame( string roomCode )
         {
-            var game = GetGame( roomCode );
+            var game = _games.FirstOrDefault( e => e.Key == roomCode ).Value;
 
             var includeProperties = string.Join( ",", "GameType" );
             var room = await _roomRepository.FirstOrDefault( e => e.RoomCode == roomCode, includeProperties );
             
             if ( game.Players.Count() < room.GameType.MinPlayers )
             {
-                return new HubErrorResponse { Message = $"{room.GameType.GameName} needs at least ${room.GameType.MinPlayers} players to start.", Method = "StartGame" };
+                return new HubErrorResponse { Message = $"{room.GameType.GameName} needs at least {room.GameType.MinPlayers} players to start.", Method = "StartGame" };
             }
 
             var didStartGame = game.StartGame();
@@ -212,18 +209,5 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
                 Method = "StartGame"
             };
         }
-
-
-        private Game GetGame( string roomCode )
-        {
-            var game = _games.FirstOrDefault( e => e.Key == roomCode ).Value;
-            if ( game == null )
-            {
-                game = new Game();
-                _games.Add( roomCode, game );
-            }
-            return game;
-        }
-
     }
 }
