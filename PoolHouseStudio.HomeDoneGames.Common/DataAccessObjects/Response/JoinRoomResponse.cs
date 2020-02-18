@@ -4,6 +4,7 @@ namespace PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response
 {
     public class JoinRoomResponse
     {
+        public string ConnectionId { get; set; }
         public string Description { get; set; }
         public string GameName { get; set; }
         public string GroupName { get; set; }

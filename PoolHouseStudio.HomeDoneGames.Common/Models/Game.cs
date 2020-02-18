@@ -19,8 +19,9 @@ namespace PoolHouseStudio.HomeDoneGames.Common.Models
         public bool IsStarted { get; private set; }
         public Dictionary<string, Player> Players { get; set; }
         public string RoomCode { get; set; }
-        public int RoundNumber { get; private set; }
+        public int CurrentRoundNumber { get; private set; }
         public Dictionary<string, Player> TurnOrder { get; private set; }
+        public GameData GameData { get; private set; }
 
         public bool StartGame()
         {
@@ -31,9 +32,19 @@ namespace PoolHouseStudio.HomeDoneGames.Common.Models
 
             TurnOrder = Shuffle();
 
-            RoundNumber = 1;
+            CurrentRoundNumber = 1;
             CurrentTurn = TurnOrder.First().Value;
 
+            var round = new RoundData
+            {
+                RoundNumber = 1
+            };
+
+            GameData = new GameData()
+            {
+                Rounds = new List<RoundData> { round }
+            };
+            
             IsStarted = true;
             return true;
         }

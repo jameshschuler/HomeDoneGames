@@ -2,7 +2,6 @@ $backgroundColor: #f9f7f1;
 
 @import "./common/dialog.scss";
 @import "./common/loaders.scss";
-@import "./components/join-room.scss";
 @import "./components/navbar.scss";
 @import "./components/lobby.scss";
 
@@ -22,7 +21,7 @@ body {
 
 .paper {
   background-color: $backgroundColor !important;
-  margin-top: 30%;
+  margin-top: 3rem;
 
   .title {
     font-size: 4rem;
@@ -45,5 +44,54 @@ body {
         background-color: lightgrey;
       }
     }
+  }
+}
+
+.link-button {
+  width: 100%;
+
+  a {
+    color: #fff;
+    text-decoration: none;
+  }
+}
+
+.games {
+  margin-top: 1rem;
+}
+
+.back-link {
+  color: #000;
+  text-decoration: none;
+
+  span {
+    margin-left: 0.5rem;
+  }
+
+  svg {
+    font-size: 1rem;
+  }
+}
+
+.button-group {
+  margin-top: 1rem;
+
+  button {
+    width: 100%;
+  }
+
+  h6 {
+    margin: 0.5rem 0;
+  }
+}
+
+.flex-form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 2rem;
+
+  .MuiTextField-root {
+    background-color: #fff;
+    margin-bottom: 1rem;
   }
 }

@@ -37,7 +37,6 @@ const hubReducer = (state: IHubState = initialState, action: IAction) => {
         roomCode: action.payload.roomCode
       };
     case ActionType.GameStarted:
-      console.log(action.payload.gameData);
       let gameData = {
         ...state.gameData,
         ...action.payload.gameData

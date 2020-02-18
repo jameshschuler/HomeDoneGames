@@ -44,13 +44,18 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
 
   return (
     <Grid item xs={12} sm={8} id="create-room">
+      <Link to="/select-game" className="back-link">
+        <i className="fas fa-fw fa-arrow-circle-left"></i>
+        <span>Select Game</span>
+      </Link>
       <Paper className="paper" elevation={0}>
-        <Typography variant="h6">
-          Enter a name to get started! Room Code is optional
+        <Typography variant="h6" align="center">
+          Enter a name to get started!
         </Typography>
 
         <form
           id="create-room-form"
+          className="flex-form"
           onSubmit={(e: any) => submitForm(e)}
           autoComplete="off"
         >
@@ -63,7 +68,6 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
             onChange={handleChange("playerName")}
             value={values.playerName}
           />
-
           <Button
             size="medium"
             variant="contained"
@@ -73,8 +77,6 @@ const CreateRoom: React.FC<CreateRoomProps> = ({
             Create Room
           </Button>
         </form>
-
-        <Link to="/select-game">Back to Select Game</Link>
       </Paper>
     </Grid>
   );

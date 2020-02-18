@@ -8,6 +8,7 @@ import { IRootState } from "../../store/reducers/RootReducer";
 
 interface ILobbyProps {
   history: any;
+  isStarted: boolean | undefined;
   loading: boolean;
   me: Player | undefined;
   players: Player[];
@@ -17,6 +18,7 @@ interface ILobbyProps {
 
 const Lobby: React.FC<ILobbyProps> = ({
   history,
+  isStarted,
   loading,
   me,
   players,
@@ -28,6 +30,12 @@ const Lobby: React.FC<ILobbyProps> = ({
       history.push("/join-room");
     }
   }, []);
+
+  useEffect(() => {
+    if (isStarted) {
+      history.push("/play");
+    }
+  }, [isStarted]);
 
   return (
     <Grid item xs={12} sm={8} id="lobby">
@@ -65,6 +73,7 @@ const Lobby: React.FC<ILobbyProps> = ({
 const mapStateToProps = (state: IRootState) => {
   return {
     me: state.hub.me,
+    isStarted: state.hub.gameData?.isStarted,
     loading: state.global.loading,
     players: state.hub.players,
     roomCode: state.hub.roomCode

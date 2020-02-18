@@ -50,7 +50,12 @@ export const signalRMiddleware = (store: any) => (next: any) => async (
         });
         break;
       case HubMethods.GameStarted:
-        console.log("GameStarted");
+        dispatch({
+          type: ActionType.GameStarted,
+          payload: {
+            gameData: response.data
+          }
+        });
         break;
     }
   };

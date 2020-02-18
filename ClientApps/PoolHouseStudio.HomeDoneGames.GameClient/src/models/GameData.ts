@@ -5,6 +5,7 @@ export interface IGameData {
   description: string;
   gameName: string;
   gameTypeID: string;
+  groupName: string;
   isStarted: boolean;
   minPlayers: number;
   me: Player;

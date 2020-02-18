@@ -1,4 +1,5 @@
-﻿using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Request;
+﻿using PoolHouseStudio.HomeDoneGames.Common;
+using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Request;
 using PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response;
 using PoolHouseStudio.HomeDoneGames.Common.Models;
 using PoolHouseStudio.HomeDoneGames.DataAccessLayer.Entities;
@@ -16,6 +17,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
         HubResponse CreateGame( string connectionId, Room  room, CreateRoomRequest request );
         GameManager GetGameManager( string roomCode );
         IList<Player> GetPlayers( string roomCode );
+        HubResponse HandlePlayerResponse( string connectionId, PlayerResponseRequest request );
         Task<HubResponse> JoinRoom( string connectionId, JoinRoomRequest joinRoomRequest );
         Task<HubResponse> StartGame( string roomCode );
     }
@@ -56,6 +58,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
 
             var player = new Player
             {
+                ConnectionId = connectionId,
                 GroupName = game.GroupName,
                 IsFirstPlayer = true,
                 Lives = 3, // TODO: this value will come from the GameType object
@@ -139,6 +142,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
 
             var player = new Player
             {
+                ConnectionId = connectionId,
                 Name = joinRoomRequest.Name,
                 RoomCode = joinRoomRequest.RoomCode,
                 GroupName = game.GroupName,
@@ -165,6 +169,7 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
             {
                 Data = new JoinRoomResponse
                 {
+                    ConnectionId = connectionId,
                     Description = room.GameType.Description,
                     GameName = room.GameType.GameName,
                     GroupName = game.GroupName,
@@ -175,6 +180,36 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
                 Message = "Joined!",
                 Method = "JoinRoomAsClient"
             };
+        }
+
+        public HubResponse HandlePlayerResponse( string connectionId, PlayerResponseRequest request )
+        {
+            var game = GetGame( request.RoomCode );
+
+            switch((Common.Models.Enum.GameType) game.GameTypeID)
+            {
+                case Common.Models.Enum.GameType.NeverHaveIEver:
+                    var gameData = game.GameData;
+                    var round = gameData.Rounds.FirstOrDefault( e => e.RoundNumber == game.CurrentRoundNumber );
+
+                    // TODO: make this check more robust
+                    if (!string.IsNullOrWhiteSpace(request.Statement))
+                    {
+                        // save statement
+                        round.Statement = request.Statement;
+                    } 
+                    else
+                    {
+                        // save answer for the given player
+
+                        // TODO: check if we have received all expected answers and handle accordingly
+                        round.Answers.Add( connectionId, request.Answer );
+                    }
+                    
+                    break;
+                default:
+                    return new HubErrorResponse { Message = $"Game was already started!", Method = "HandlePlayerResponse" };
+            }
         }
 
         public async Task<HubResponse> StartGame( string roomCode )
@@ -201,13 +236,31 @@ namespace PoolHouseStudio.HomeDoneGames.Service.Services
                 Data = new StartGameResponse
                 {
                    CurrentTurn = game.CurrentTurn,
+                   GroupName = game.GroupName,
                    IsStarted = game.IsStarted,
-                   RoundNumber = game.RoundNumber,
+                    CurrentRoundNumber = game.CurrentRoundNumber,
                    TurnOrder = game.TurnOrder,
                 },
                 Message = "Started Game!",
                 Method = "StartGame"
             };
+        }
+
+        private string GenerateID()
+        {
+            return Guid.NewGuid().ToString();
+        }
+
+        private Game GetGame(string roomCode)
+        {
+            var game = _games.FirstOrDefault( e => e.Key == roomCode ).Value;
+
+            if ( game == null )
+            {
+                throw new NotFoundException("Game not found", "Unable to find game.");
+            }
+
+            return game;
         }
     }
 }

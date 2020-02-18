@@ -47,12 +47,16 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({ error, joinRoom, history }) => {
   return (
     <Grid item xs={12} sm={8} id="join-room">
       <Paper className="paper" elevation={0}>
+        <Typography variant="h4" align="center">
+          Welcome!
+        </Typography>
         <Typography variant="h6">
           Enter a room code and name to get started!
         </Typography>
 
         <form
           id="join-room-form"
+          className="flex-form"
           onSubmit={(e: any) => submitForm(e)}
           autoComplete="off"
         >
@@ -74,17 +78,29 @@ const JoinRoom: React.FC<IJoinRoomProps> = ({ error, joinRoom, history }) => {
             onChange={handleChange("playerName")}
             value={values.playerName}
           />
-          <Button
-            size="medium"
-            variant="contained"
-            color="primary"
-            type="submit"
-          >
-            Join Room
-          </Button>
+          <div className="button-group">
+            <Button
+              size="medium"
+              variant="contained"
+              color="primary"
+              type="submit"
+            >
+              Join Room
+            </Button>
+            <Typography variant="h6" align="center">
+              - or -
+            </Typography>
+            <Button
+              className="link-button"
+              size="medium"
+              variant="contained"
+              color="secondary"
+              type="button"
+            >
+              <Link to="/select-game">Create Room</Link>
+            </Button>
+          </div>
         </form>
-
-        <Link to="/select-game">Create Room</Link>
       </Paper>
     </Grid>
   );

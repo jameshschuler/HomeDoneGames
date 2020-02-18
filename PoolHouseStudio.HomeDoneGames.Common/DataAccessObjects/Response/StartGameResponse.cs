@@ -8,7 +8,7 @@ namespace PoolHouseStudio.HomeDoneGames.Common.DataAccessObjects.Response
         public Player CurrentTurn { get; set; }
         public bool IsStarted { get; set; }
         public string GroupName { get; set; }
-        public int RoundNumber { get; set; }
+        public int CurrentRoundNumber { get; set; }
         public Dictionary<string, Player> TurnOrder { get; set; }
     }
 }

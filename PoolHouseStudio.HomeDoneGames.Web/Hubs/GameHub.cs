@@ -129,13 +129,8 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
                 var successResponse = (HubSuccessResponse) response;
                 var data = (StartGameResponse) successResponse.Data;
 
-                await SendSuccessResponseToCaller( successResponse );
-                await SendSuccessResponseToGroup( data.GroupName, new HubSuccessResponse
-                {
-                    Data = data,
-                    Method = "GameStarted",
-                    Message = "The game has started!"
-                } );
+                // TODO: do we need this? await SendSuccessResponseToCaller( successResponse );
+                await SendSuccessResponseToGroup( data.GroupName, successResponse);
             }
             catch ( Exception ex )
             {
@@ -145,6 +140,13 @@ namespace PoolHouseStudio.HomeDoneGames.Web.Hubs
                     Method = "StartGame"
                 } );
             }
+        }
+ 
+        public async Task HandlePlayerResponse( PlayerResponseRequest request )
+        {
+            // TODO: should handle based on game type id sent in request
+            // TODO: Takes player response (could be statement or answer to statement ) and updates current round data
+            throw new NotImplementedException();
         }
 
         #region Private Methods

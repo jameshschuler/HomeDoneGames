@@ -1,4 +1,5 @@
 export interface Player {
+  connectionId: string;
   groupName: string;
   name: string;
   roomCode: string;
